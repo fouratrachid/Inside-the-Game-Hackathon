@@ -9,7 +9,12 @@ from langchain_core.language_models import BaseChatModel
 
 from app.config import Settings
 
-PROVIDER_LABELS = {"gemini": "Gemini", "foundry": "Microsoft Foundry", "ollama": "Ollama"}
+PROVIDER_LABELS = {
+    "gemini": "Gemini",
+    "foundry": "Microsoft Foundry",
+    "ollama": "Ollama",
+    "offline": "Offline rule-based baseline",
+}
 
 
 def model_name(settings: Settings) -> str:
@@ -17,11 +22,16 @@ def model_name(settings: Settings) -> str:
         "gemini": settings.gemini_model,
         "foundry": settings.foundry_deployment,
         "ollama": settings.ollama_model,
+        "offline": "offline-rule-based",
     }[settings.chat_provider]
 
 
 def build_model(settings: Settings) -> BaseChatModel:
     provider = settings.chat_provider
+    if provider == "offline":
+        from app.agent.offline import OfflineAnalyst
+
+        return OfflineAnalyst()
     timeout = min(settings.chat_timeout_seconds, 30)
     if provider == "ollama":
         from langchain_ollama import ChatOllama

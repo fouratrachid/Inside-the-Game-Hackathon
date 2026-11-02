@@ -22,6 +22,8 @@ See above; original fields unchanged.
 
 **Phase 4:** `trace_log`, `langfuse_*`, `rag_*` (enabled, path `data/chroma`, collection, embedder `fastembed|gemini|hash`, model, top_k), `chat_rate_limit`/`chat_rate_window_seconds`, `cache_ttl_seconds`/`cache_max_entries`, `session_budget_usd` (default 0.10), `model_prices`.
 
+**Phase 5:** `chat_provider` accepts `offline`.
+
 ## Tests
 `test_providers_build_without_network`, `test_maf_setting_still_runs_the_original_workflow`.
 

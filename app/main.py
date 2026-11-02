@@ -69,7 +69,7 @@ def create_app() -> FastAPI:
         snapshot = session.snapshot()
         if settings.agent == "langgraph":
             return await application.state.agent.ask(payload.question, payload.mode, session)
-        if settings.chat_provider == "ollama":
+        if settings.chat_provider in {"ollama", "offline"}:
             raise HTTPException(503, "The original workflow supports Gemini or Foundry only.")
         try:
             request = ChatRequest(question=payload.question, mode=payload.mode, snapshot=snapshot)

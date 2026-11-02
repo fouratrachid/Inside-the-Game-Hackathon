@@ -82,6 +82,11 @@ def wrap_data(kind: str, content: str, **attributes) -> str:
 
 
 SCORE = re.compile(r"\b(\d{1,2})\s*(?:-|–|—|to)\s*(\d{1,2})\b")
+SCORE_CONTEXT = re.compile(
+    r"\b(score|scoreline|lead|leads|leading|led|win|wins|won|winning|draw|drawn|level|ends|"
+    r"ended|final|full[- ]time|result|it is|it's|goals?)\b",
+    re.IGNORECASE,
+)
 MINUTE = re.compile(r"\b(\d{1,3})\s*(?:′|'|’|(?:st|nd|rd|th)? ?min(?:ute)?s?\b)", re.IGNORECASE)
 
 
@@ -103,10 +108,12 @@ def check_output(
         problems.append("system_prompt_leak")
     if score is not None:
         allowed = {score, score[::-1]}
-        for match in SCORE.finditer(text):
-            pair = (int(match.group(1)), int(match.group(2)))
-            # Ignore obvious non-scores such as minute ranges ("0-45", "15 to 30").
-            if max(pair) <= 9 and pair not in allowed:
+        for sentence in re.split(r"(?<=[.!?])\s+", text):
+            # Only sentences about the scoreline: "Shots 7-6" or "minutes 0-15" are not scores.
+            if not SCORE_CONTEXT.search(sentence):
+                continue
+            pairs = [(int(m.group(1)), int(m.group(2))) for m in SCORE.finditer(sentence)]
+            if any(max(pair) <= 9 and pair not in allowed for pair in pairs):
                 problems.append("score_mismatch")
                 break
     for match in MINUTE.finditer(text):

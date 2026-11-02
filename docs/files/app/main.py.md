@@ -35,6 +35,8 @@ Before: `/chat` accepted `ChatRequest` with a browser `snapshot`. Phase 1: `Chat
 
 **Phase 4:** builds the tracer, knowledge base and per-session `RateLimiter`; `chat_session()` shared by `/chat` and `/chat/stream` (404/409/429); new `POST /chat/stream` (SSE `token`/`reset`/`final`/`error`) and `GET /sessions/{id}/usage`.
 
+**Phase 5:** the original MAF path rejects `offline` (and `ollama`) with 503.
+
 ## Tests
 `tests/test_app.py`, `tests/test_sessions.py`.
 

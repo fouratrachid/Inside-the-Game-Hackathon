@@ -21,3 +21,7 @@ jobs:
       - run: pipenv run lint
       - run: pipenv run format --check
       - run: pipenv run test
+      # Touchline+ Phase 5: evaluation harness subset with the offline (rule-based) model.
+      - run: pipenv run python -m eval.run --subset ci --configs langgraph/offline --out "$RUNNER_TEMP/eval" --no-human-export
+        env:
+          GAME_RAG_EMBEDDER: hash

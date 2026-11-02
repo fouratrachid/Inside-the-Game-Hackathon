@@ -24,6 +24,8 @@ Called by `app/agent/service.py`; reads `app/config.py`.
 ## What changed
 New in Phase 2.
 
+**Phase 5:** provider `offline` → `OfflineAnalyst` (label "Offline rule-based baseline", model name `offline-rule-based`).
+
 ## Tests
 `test_providers_build_without_network` builds each provider offline and checks the 503 without a Gemini key.
 

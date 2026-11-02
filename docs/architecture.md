@@ -1,6 +1,6 @@
 # Touchline+ architecture
 
-_Updated at the end of every phase. Current state: **Phase 4** (production AI layer)._
+_Updated at the end of every phase. Current state: **Phase 5** (evaluation harness)._
 
 ## System
 
@@ -87,4 +87,16 @@ sequenceDiagram
     G-->>UI: token events
     G-->>S: validated answer + usage
     S-->>UI: final {citations, sources, trace, cost, session_usage}
+```
+
+## Evaluation (Phase 5)
+
+```mermaid
+flowchart LR
+    Q[eval/questions.json] --> R[eval/run.py]
+    R -->|replay_to stop minute| S[MatchSession]
+    R --> C1[langgraph/offline] & C2[langgraph/gemini] & C3[maf/gemini] & C4[langgraph/ollama]
+    C1 & C2 & C3 & C4 --> M[metrics + judge]
+    M --> O[results.json / .md / .png]
+    M --> H[human_grading.csv] --> A[agreement.py]
 ```

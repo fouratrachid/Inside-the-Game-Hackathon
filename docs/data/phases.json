@@ -35,6 +35,13 @@
       "branch": "phase-4-production-ai",
       "tests": 114,
       "new_tests": 23
+    },
+    {
+      "phase": 5,
+      "name": "Evaluation",
+      "branch": "phase-5-eval",
+      "tests": 120,
+      "new_tests": 6
     }
   ],
   "charts": [

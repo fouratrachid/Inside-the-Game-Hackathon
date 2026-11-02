@@ -1,0 +1,1335 @@
+{
+  "rows": [
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-score",
+      "kind": "score",
+      "question": "What is the score?",
+      "stop_minute": 20,
+      "expected": {
+        "score": "1-0"
+      },
+      "answer": "It is Northbridge FC 1-0 Southbank United.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0394,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-shots",
+      "kind": "shots",
+      "question": "How many shots does each team have?",
+      "stop_minute": 20,
+      "expected": {
+        "home.shots": 5,
+        "away.shots": 2
+      },
+      "answer": "Shots 5-2 (2-0 on target), xG 0.45 vs 0.10.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-141",
+        "synthetic-42-58"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.029,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-chances",
+      "kind": "chances",
+      "question": "Who has created the better chances so far?",
+      "stop_minute": 20,
+      "expected": {
+        "home.xg": 0.452,
+        "away.xg": 0.099
+      },
+      "answer": "Shots 5-2 (2-0 on target), xG 0.45 vs 0.10.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-141",
+        "synthetic-42-58"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.0358,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-possession",
+      "kind": "possession",
+      "question": "How is possession split?",
+      "stop_minute": 20,
+      "expected": {
+        "home.possession": 48.8,
+        "away.possession": 51.2
+      },
+      "answer": "Estimated possession is 48.8% to 51.2%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0297,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-field_tilt",
+      "kind": "field_tilt",
+      "question": "What does field tilt say so far?",
+      "stop_minute": 20,
+      "expected": {
+        "home.field_tilt": 37.5,
+        "away.field_tilt": 62.5
+      },
+      "answer": "Field tilt is 37.5% to 62.5%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0283,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-player_passes",
+      "kind": "player_passes",
+      "question": "How many passes has Northbridge 10 made?",
+      "stop_minute": 20,
+      "expected": {
+        "player.passes": 8,
+        "player.completed": 8
+      },
+      "answer": "Northbridge 10 has 8 passes (8 completed, 0 progressive), 0 shots worth 0.00 xG and 0.02 xT added so far.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-168",
+        "synthetic-42-134"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Northbridge 10"
+          }
+        }
+      ],
+      "latency_s": 0.0301,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-player_shots",
+      "kind": "player_shots",
+      "question": "How many shots has Northbridge 11 taken, and for how much xG?",
+      "stop_minute": 20,
+      "expected": {
+        "player.shots": 2,
+        "player.xg": 0.292
+      },
+      "answer": "Northbridge 11 has 4 passes (4 completed, 0 progressive), 2 shots worth 0.29 xG and 0.01 xT added so far.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-167",
+        "synthetic-42-126"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Northbridge 11"
+          }
+        }
+      ],
+      "latency_s": 0.0472,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-window",
+      "kind": "window",
+      "question": "Compare the first 15 minutes for both teams.",
+      "stop_minute": 20,
+      "expected": {
+        "window.home.shots": 4,
+        "window.away.shots": 2,
+        "window.home.passes": 40
+      },
+      "answer": "In minutes 0-15 (end exclusive): Northbridge FC 4 shots, 0.34 xG, 40 passes; Southbank United 2 shots, 0.10 xG, 32 passes.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "compare_periods",
+          "args": {
+            "start_min": 0,
+            "end_min": 15
+          }
+        }
+      ],
+      "latency_s": 0.0343,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "3/3 expected facts stated; no leakage.",
+      "facts_matched": 3,
+      "facts_total": 3,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-20-momentum",
+      "kind": "momentum",
+      "question": "Who is on top in the last 10 minutes?",
+      "stop_minute": 20,
+      "expected": {
+        "momentum.leader": "Southbank United"
+      },
+      "answer": "Southbank United are on top: xT added over the last 10 minutes of period 1 is Northbridge FC 0.06, Southbank United 0.11.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_momentum",
+          "args": {
+            "window_min": 10
+          }
+        }
+      ],
+      "latency_s": 0.029,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-score",
+      "kind": "score",
+      "question": "What is the score?",
+      "stop_minute": 44,
+      "expected": {
+        "score": "1-0"
+      },
+      "answer": "It is Northbridge FC 1-0 Southbank United.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0308,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-shots",
+      "kind": "shots",
+      "question": "How many shots does each team have?",
+      "stop_minute": 44,
+      "expected": {
+        "home.shots": 7,
+        "away.shots": 6
+      },
+      "answer": "Shots 7-6 (2-1 on target), xG 0.54 vs 0.71.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-321",
+        "synthetic-42-307"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.0319,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-chances",
+      "kind": "chances",
+      "question": "Who has created the better chances so far?",
+      "stop_minute": 44,
+      "expected": {
+        "home.xg": 0.538,
+        "away.xg": 0.708
+      },
+      "answer": "Shots 7-6 (2-1 on target), xG 0.54 vs 0.71.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-321",
+        "synthetic-42-307"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.0432,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-possession",
+      "kind": "possession",
+      "question": "How is possession split?",
+      "stop_minute": 44,
+      "expected": {
+        "home.possession": 47.4,
+        "away.possession": 52.6
+      },
+      "answer": "Estimated possession is 47.4% to 52.6%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0395,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-field_tilt",
+      "kind": "field_tilt",
+      "question": "What does field tilt say so far?",
+      "stop_minute": 44,
+      "expected": {
+        "home.field_tilt": 42.9,
+        "away.field_tilt": 57.1
+      },
+      "answer": "Field tilt is 42.9% to 57.1%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0299,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-player_passes",
+      "kind": "player_passes",
+      "question": "How many passes has Northbridge 10 made?",
+      "stop_minute": 44,
+      "expected": {
+        "player.passes": 16,
+        "player.completed": 16
+      },
+      "answer": "Northbridge 10 has 16 passes (16 completed, 0 progressive), 0 shots worth 0.00 xG and 0.03 xT added so far.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-376",
+        "synthetic-42-370"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Northbridge 10"
+          }
+        }
+      ],
+      "latency_s": 0.0375,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-player_shots",
+      "kind": "player_shots",
+      "question": "How many shots has Southbank 6 taken, and for how much xG?",
+      "stop_minute": 44,
+      "expected": {
+        "player.shots": 3,
+        "player.xg": 0.325
+      },
+      "answer": "Southbank 6 has 16 passes (16 completed, 2 progressive), 3 shots worth 0.33 xG and 0.07 xT added so far.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-309",
+        "synthetic-42-308"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Southbank 6"
+          }
+        }
+      ],
+      "latency_s": 0.0299,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-window",
+      "kind": "window",
+      "question": "Compare the first 15 minutes for both teams.",
+      "stop_minute": 44,
+      "expected": {
+        "window.home.shots": 4,
+        "window.away.shots": 2,
+        "window.home.passes": 40
+      },
+      "answer": "In minutes 0-15 (end exclusive): Northbridge FC 4 shots, 0.34 xG, 40 passes; Southbank United 2 shots, 0.10 xG, 32 passes.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "compare_periods",
+          "args": {
+            "start_min": 0,
+            "end_min": 15
+          }
+        }
+      ],
+      "latency_s": 0.0311,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "3/3 expected facts stated; no leakage.",
+      "facts_matched": 3,
+      "facts_total": 3,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-44-momentum",
+      "kind": "momentum",
+      "question": "Who is on top in the last 10 minutes?",
+      "stop_minute": 44,
+      "expected": {
+        "momentum.leader": "Northbridge FC"
+      },
+      "answer": "Northbridge FC are on top: xT added over the last 10 minutes of period 1 is Northbridge FC 0.17, Southbank United 0.07.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_momentum",
+          "args": {
+            "window_min": 10
+          }
+        }
+      ],
+      "latency_s": 0.0321,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-score",
+      "kind": "score",
+      "question": "What is the score?",
+      "stop_minute": 70,
+      "expected": {
+        "score": "1-1"
+      },
+      "answer": "It is Northbridge FC 1-1 Southbank United.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0295,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-shots",
+      "kind": "shots",
+      "question": "How many shots does each team have?",
+      "stop_minute": 70,
+      "expected": {
+        "home.shots": 7,
+        "away.shots": 10
+      },
+      "answer": "Shots 7-10 (2-2 on target), xG 0.54 vs 1.37.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-531",
+        "synthetic-42-483"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.0314,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-chances",
+      "kind": "chances",
+      "question": "Who has created the better chances so far?",
+      "stop_minute": 70,
+      "expected": {
+        "home.xg": 0.538,
+        "away.xg": 1.373
+      },
+      "answer": "Shots 7-10 (2-2 on target), xG 0.54 vs 1.37.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-531",
+        "synthetic-42-483"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.0326,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-possession",
+      "kind": "possession",
+      "question": "How is possession split?",
+      "stop_minute": 70,
+      "expected": {
+        "home.possession": 43.5,
+        "away.possession": 56.5
+      },
+      "answer": "Estimated possession is 43.5% to 56.5%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0318,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-field_tilt",
+      "kind": "field_tilt",
+      "question": "What does field tilt say so far?",
+      "stop_minute": 70,
+      "expected": {
+        "home.field_tilt": 38.0,
+        "away.field_tilt": 62.0
+      },
+      "answer": "Field tilt is 38.0% to 62.0%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0332,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-player_passes",
+      "kind": "player_passes",
+      "question": "How many passes has Southbank 7 made?",
+      "stop_minute": 70,
+      "expected": {
+        "player.passes": 26,
+        "player.completed": 23
+      },
+      "answer": "Southbank 7 has 26 passes (23 completed, 3 progressive), 2 shots worth 0.49 xG and 0.40 xT added so far.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-607",
+        "synthetic-42-606"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Southbank 7"
+          }
+        }
+      ],
+      "latency_s": 0.0464,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-player_shots",
+      "kind": "player_shots",
+      "question": "How many shots has Southbank 6 taken, and for how much xG?",
+      "stop_minute": 70,
+      "expected": {
+        "player.shots": 3,
+        "player.xg": 0.325
+      },
+      "answer": "Southbank 6 has 23 passes (23 completed, 3 progressive), 3 shots worth 0.33 xG and 0.31 xT added so far.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-608",
+        "synthetic-42-602"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Southbank 6"
+          }
+        }
+      ],
+      "latency_s": 0.0479,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-70-window",
+      "kind": "window",
+      "question": "Compare the first 15 minutes for both teams.",
+      "stop_minute": 70,
+      "expected": {
+        "window.home.shots": 4,
+        "window.away.shots": 2,
+        "window.home.passes": 40
+      },
+      "answer": "In minutes 0-15 (end exclusive): Northbridge FC 4 shots, 0.34 xG, 40 passes; Southbank United 2 shots, 0.10 xG, 32 passes.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "compare_periods",
+          "args": {
+            "start_min": 0,
+            "end_min": 15
+          }
+        }
+      ],
+      "latency_s": 0.0475,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "3/3 expected facts stated; no leakage.",
+      "facts_matched": 3,
+      "facts_total": 3,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-89-score",
+      "kind": "score",
+      "question": "What is the score?",
+      "stop_minute": 89,
+      "expected": {
+        "score": "1-1"
+      },
+      "answer": "It is Northbridge FC 1-1 Southbank United.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0481,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-89-shots",
+      "kind": "shots",
+      "question": "How many shots does each team have?",
+      "stop_minute": 89,
+      "expected": {
+        "home.shots": 13,
+        "away.shots": 11
+      },
+      "answer": "Shots 13-11 (4-2 on target), xG 0.93 vs 1.45.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-798",
+        "synthetic-42-704"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.0472,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-89-chances",
+      "kind": "chances",
+      "question": "Who has created the better chances so far?",
+      "stop_minute": 89,
+      "expected": {
+        "home.xg": 0.929,
+        "away.xg": 1.453
+      },
+      "answer": "Shots 13-11 (4-2 on target), xG 0.93 vs 1.45.",
+      "error": null,
+      "cited_event_ids": [
+        "synthetic-42-798",
+        "synthetic-42-704"
+      ],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        },
+        {
+          "tool": "get_recent_events",
+          "args": {
+            "n": 5,
+            "type": "Shot"
+          }
+        }
+      ],
+      "latency_s": 0.048,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 2,
+      "cited_valid": 2,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "m1-89-possession",
+      "kind": "possession",
+      "question": "How is possession split?",
+      "stop_minute": 89,
+      "expected": {
+        "home.possession": 43.9,
+        "away.possession": 56.1
+      },
+      "answer": "Estimated possession is 43.9% to 56.1%.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [],
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 0.0316,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "2/2 expected facts stated; no leakage.",
+      "facts_matched": 2,
+      "facts_total": 2,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "def-1",
+      "kind": "definition",
+      "question": "What is field tilt?",
+      "stop_minute": 30,
+      "expected": {
+        "source": "knowledge/field-tilt.md"
+      },
+      "answer": "Field tilt is each team's share of completed passes that start in the attacking third. In StatsBomb coordinates, where both teams attack increasing x, the attacking third is x from 80 to 120 on the 120-long pitch. If the home team has completed 30 attacking-third.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [
+        "knowledge/field-tilt.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "What is field tilt?"
+          }
+        }
+      ],
+      "latency_s": 0.0412,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "def-2",
+      "kind": "definition",
+      "question": "What does xT mean?",
+      "stop_minute": 30,
+      "expected": {
+        "source": "knowledge/xt.md"
+      },
+      "answer": "For each completed pass (including open-play crosses) and each carry, action xT is the end cell's value minus the start cell's value. Failed passes, set-piece restarts, shots and take-ons are excluded. Touchline+ sums positive action xT per team or player as \"xT added\".",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [
+        "knowledge/xt.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "What does xT mean?"
+          }
+        }
+      ],
+      "latency_s": 0.0365,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "def-3",
+      "kind": "definition",
+      "question": "What is xG?",
+      "stop_minute": 30,
+      "expected": {
+        "source": "knowledge/xg.md"
+      },
+      "answer": "Touchline does not compute its own xG for real matches. It shows StatsBomb's supplied `statsbomb_xg` value for each shot and sums them per team as match-to-date xG. Penalty shoot-out shots are excluded. In the fictional synthetic match, xG is an illustrative distance heuristic and is.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [
+        "knowledge/xg.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "What is xG?"
+          }
+        }
+      ],
+      "latency_s": 0.0396,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "def-4",
+      "kind": "definition",
+      "question": "How is possession estimated?",
+      "stop_minute": 30,
+      "expected": {
+        "source": "knowledge/possession.md"
+      },
+      "answer": "This is an estimate, not an official possession figure from ball tracking. Long gaps between recorded events can over-credit one team. Use it to compare teams within a match rather than across data providers.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [
+        "knowledge/possession.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "How is possession estimated?"
+          }
+        }
+      ],
+      "latency_s": 0.0353,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "def-5",
+      "kind": "definition",
+      "question": "What is the momentum proxy?",
+      "stop_minute": 30,
+      "expected": {
+        "source": "knowledge/momentum.md"
+      },
+      "answer": "The momentum chart records each team's highest location-grid xT in each period-minute, using the destination of completed open-play passes and carries and the starting location of shots. Each minute peak is capped to 0.1. The current and previous three minutes are averaged with a 60-second.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [
+        "knowledge/momentum.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "What is the momentum proxy?"
+          }
+        }
+      ],
+      "latency_s": 0.0595,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    },
+    {
+      "config": "langgraph/offline",
+      "id": "def-6",
+      "kind": "definition",
+      "question": "What does a passing network mean?",
+      "stop_minute": 30,
+      "expected": {
+        "source": "knowledge/passing-networks.md"
+      },
+      "answer": "A passing network shows each player at the average location of their passes and receptions, with lines between players whose thickness reflects how often they passed to each other. Touchline builds it live from completed passes already replayed.",
+      "error": null,
+      "cited_event_ids": [],
+      "cited_sources": [
+        "knowledge/passing-networks.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "What does a passing network mean?"
+          }
+        }
+      ],
+      "latency_s": 0.0499,
+      "judge": "heuristic (no judge model configured)",
+      "judge_score": 5,
+      "judge_justification": "1/1 expected facts stated; no leakage.",
+      "facts_matched": 1,
+      "facts_total": 1,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
+      "citation_ok": 1.0,
+      "leaks": []
+    }
+  ],
+  "summary": [
+    {
+      "config": "langgraph/offline",
+      "questions": 36,
+      "errors": 0,
+      "factual_accuracy": 1.0,
+      "citation_validity": 1.0,
+      "leakage": 0,
+      "latency_p50_s": 0.0353,
+      "latency_p95_s": 0.0481,
+      "avg_tool_calls": 1.222,
+      "judge": "heuristic (no judge model configured)",
+      "judge_avg": 5
+    },
+    {
+      "config": "langgraph/gemini",
+      "skipped": "no GAME_GEMINI_API_KEY"
+    },
+    {
+      "config": "langgraph/foundry",
+      "skipped": "no Foundry credentials"
+    },
+    {
+      "config": "maf/gemini",
+      "skipped": "no GAME_GEMINI_API_KEY"
+    },
+    {
+      "config": "maf/foundry",
+      "skipped": "no Foundry credentials"
+    },
+    {
+      "config": "langgraph/ollama",
+      "skipped": "Ollama not reachable"
+    }
+  ],
+  "retrieval": {
+    "questions": 6,
+    "hit_at_1": 1.0,
+    "hit_at_3": 1.0
+  },
+  "subset": "all"
+}

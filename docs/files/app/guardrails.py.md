@@ -26,6 +26,8 @@ Used by `app/agent/service.py` (input), `app/agent/graph.py` (wrapping, output),
 ## What changed
 New in Phase 4.
 
+**Phase 5:** the scoreline check only inspects sentences with score context (`SCORE_CONTEXT`: score, lead, win, draw, ends, final, it is, goals…), so "Shots 7-6" or "minutes 0-15" are no longer false positives — found by the eval harness.
+
 ## Tests
 `tests/test_injection.py` (7 tests).
 

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     app_name: str = "Inside the Game"
     # Touchline+: which chat pipeline answers questions (original MAF workflow or LangGraph).
     agent: Literal["maf", "langgraph"] = "langgraph"
-    chat_provider: Literal["gemini", "foundry", "ollama"] = "gemini"
+    chat_provider: Literal["gemini", "foundry", "ollama", "offline"] = "gemini"
     ollama_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen2.5:7b-instruct"
     agent_max_tool_rounds: int = Field(default=4, ge=1, le=8)
