@@ -20,6 +20,8 @@ flowchart LR
 ## What changed
 Before: title `# Touchline`, no credit note. Phase 0: title renamed, credit note added at the top, Changes list added. LICENSE untouched.
 
+Phase 1: Changes entry added; the paragraph that said the prototype trusts the client snapshot and the `/chat` API row now describe server-side sessions.
+
 ## Tests
 Documentation only; no tests.
 

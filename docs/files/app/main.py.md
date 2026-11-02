@@ -1,0 +1,36 @@
+# app/main.py
+
+## Purpose
+FastAPI application factory: static pages, match catalogue, the SSE replay stream and `/chat`.
+
+## How it works
+- `create_app()` wires `StatsBombSource`, `MatchChat`, `ExplanationProvider` and (Phase 1) `SessionStore` onto `application.state`.
+- `GET /matches/{id}/stream` loads the match and events, **creates a session**, and streams `replay(..., session)`.
+- `POST /chat` accepts the public `ChatQuery {question, mode, session_id}`: unknown/expired session → 404; no events yet → 409; otherwise it builds the internal `ChatRequest` from `session.snapshot()` and calls the chat.
+
+```mermaid
+sequenceDiagram
+    Browser->>main: POST /chat {question, mode, session_id, snapshot?}
+    main->>SessionStore: get(session_id)
+    alt unknown
+      main-->>Browser: 404
+    else no events
+      main-->>Browser: 409
+    else
+      main->>MatchSession: snapshot()
+      main->>MatchChat: ask(ChatRequest(snapshot=server snapshot))
+      MatchChat-->>Browser: answer
+    end
+```
+
+## Connections
+Depends on `app/chat.py`, `app/replay.py`, `app/sessions.py`, `app/source.py`, `app/config.py`, `app/explanations.py`.
+
+## What changed
+Before: `/chat` accepted `ChatRequest` with a browser `snapshot`. Phase 1: `ChatQuery` body, session lookup, server-built snapshot; stream endpoint creates a session.
+
+## Tests
+`tests/test_app.py`, `tests/test_sessions.py`.
+
+## Limitations and future work
+No authentication: the session id is the only credential, which is acceptable for a public replay demo.

@@ -1,6 +1,19 @@
 {
   "baseline_tests": 58,
   "phases": [
-    {"phase": 0, "name": "Setup", "branch": "phase-0-setup", "tests": 58, "new_tests": 0}
+    {
+      "phase": 0,
+      "name": "Setup",
+      "branch": "phase-0-setup",
+      "tests": 58,
+      "new_tests": 0
+    },
+    {
+      "phase": 1,
+      "name": "Sessions",
+      "branch": "phase-1-sessions",
+      "tests": 65,
+      "new_tests": 7
+    }
   ]
 }

@@ -1,4 +1,4 @@
-"""Model answers grounded in the replay snapshot supplied by the viewing client."""
+"""Model answers grounded in a replay snapshot built by the server-side match session."""
 
 import asyncio
 import json
@@ -7,15 +7,27 @@ from typing import Literal
 
 import httpx
 from fastapi import HTTPException
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.chat_workflow import run_match_workflow
 from app.config import Settings
+from app.sessions import SESSION_ID_PATTERN
 
 logger = logging.getLogger(__name__)
 
 
+class ChatQuery(BaseModel):
+    """Public /chat body. Unknown fields such as a client `snapshot` are dropped."""
+
+    model_config = ConfigDict(extra="ignore")
+    question: str = Field(min_length=1, max_length=500)
+    mode: Literal["simple", "analyst"] = "simple"
+    session_id: str = Field(pattern=SESSION_ID_PATTERN)
+
+
 class ChatRequest(BaseModel):
+    """Internal request: the snapshot always comes from MatchSession.snapshot()."""
+
     question: str = Field(min_length=1, max_length=500)
     mode: Literal["simple", "analyst"] = "simple"
     snapshot: dict

@@ -1,4 +1,4 @@
-"""HTTP entry point; replay and intelligence features will be added separately."""
+"""HTTP entry point: replay streams, server-side match sessions and match chat."""
 
 from pathlib import Path
 from typing import Annotated
@@ -7,11 +7,13 @@ import httpx
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import ValidationError
 
-from app.chat import ChatRequest, MatchChat
+from app.chat import ChatQuery, ChatRequest, MatchChat
 from app.config import Settings
 from app.explanations import Audience, ExplanationProvider
 from app.replay import replay
+from app.sessions import SessionStore
 from app.source import StatsBombSource
 
 
@@ -21,6 +23,7 @@ def create_app() -> FastAPI:
     application.state.source = StatsBombSource()
     application.state.chat = MatchChat(settings)
     application.state.explanations = ExplanationProvider(settings)
+    application.state.sessions = SessionStore()
     static = Path(__file__).parent / "static"
     application.mount("/static", StaticFiles(directory=static), name="static")
 
@@ -37,8 +40,18 @@ def create_app() -> FastAPI:
         return RedirectResponse("/", status_code=308)
 
     @application.post("/chat", tags=["match intelligence"])
-    async def chat(payload: ChatRequest):
-        return await application.state.chat.ask(payload)
+    async def chat(payload: ChatQuery):
+        session = application.state.sessions.get(payload.session_id)
+        if session is None:
+            raise HTTPException(404, "Replay session not found or expired. Restart the replay.")
+        snapshot = session.snapshot()
+        if snapshot is None:
+            raise HTTPException(409, "The replay has not emitted any events yet.")
+        try:
+            request = ChatRequest(question=payload.question, mode=payload.mode, snapshot=snapshot)
+        except ValidationError:
+            raise HTTPException(500, "Could not prepare the match context.") from None
+        return await application.state.chat.ask(request)
 
     async def load(awaitable):
         try:
@@ -65,6 +78,7 @@ def create_app() -> FastAPI:
         if match is None:
             raise HTTPException(404, "Match not found in selected source")
         events = await load(application.state.source.events(match_id))
+        session = application.state.sessions.create(match)
         return StreamingResponse(
             replay(
                 events,
@@ -73,6 +87,7 @@ def create_app() -> FastAPI:
                 request.is_disconnected,
                 application.state.explanations if insights else None,
                 audience,
+                session,
             ),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},

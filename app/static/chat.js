@@ -5,10 +5,10 @@
   const status=document.getElementById("chatStatus");
   const selector=document.getElementById("intelligenceMode");
   const timeline=document.getElementById("aiTimeline"), timelineStatus=document.getElementById("timelineStatus");
-  let context=null, controller=null, version=0;
+  let context=null, controller=null, version=0, sessionId=null;
   let attempts=0, lastAttempt=-Infinity, lastNoteClock=-Infinity, lastNoteKey=null;
   function clearChat(){
-    version++;controller?.abort();controller=null;context=null;
+    version++;controller?.abort();controller=null;context=null;sessionId=null;
     send.disabled=false;
     reply.replaceChildren();
     status.textContent="";
@@ -16,6 +16,7 @@
     timeline.replaceChildren();timelineStatus.textContent="Start replay to receive AI interpretations.";
   }
   document.addEventListener("touchline:replay-reset",clearChat);
+  document.addEventListener("touchline:session",event=>{sessionId=event.detail.session_id;});
   document.addEventListener("touchline:context",event=>{context=event.detail;maybeInterpret();});
   selector.addEventListener("change",()=>{
     version++;controller?.abort();controller=null;send.disabled=false;
@@ -32,8 +33,10 @@
     }
   });
   async function generate(question, submitted, signal){
+    // Only the session id is sent: the server builds the match context it has emitted.
+    if(!sessionId)throw Error("This replay has no server session. Restart the replay.");
     const response=await fetch("/chat",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({question,mode:"simple",snapshot:submitted}),signal});
+      body:JSON.stringify({question,mode:"simple",session_id:sessionId}),signal});
     const data=await response.json();
     if(!response.ok)throw Error(typeof data.detail==="string"?data.detail:"Could not answer. Try again.");
     return data;

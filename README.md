@@ -7,6 +7,7 @@
 Touchline+ changes, phase by phase. Hadi Sotudeh's original [LICENSE](LICENSE) and copyright notice are unchanged. Each phase has a report in [docs/phases](docs/phases/), every changed file has a page in [docs/files](docs/files/README.md), and the current architecture is in [docs/architecture.md](docs/architecture.md).
 
 - **Phase 0 — Fork setup and credit.** Renamed to Touchline+, added this credit and changes list, recorded the 58-test baseline, and added documentation scaffolding plus a chart generator ([report](docs/phases/phase-0.md)).
+- **Phase 1 — Server-side match sessions.** Every replay stream creates a session announced by `session_id` in the first `match` event; `/chat` takes `{question, mode, session_id}` and the server builds the context from events it has already emitted, so a browser can no longer inject match context ([report](docs/phases/phase-1.md)).
 
 The sections below describe the original Touchline unless a change above says otherwise.
 
@@ -96,9 +97,9 @@ flowchart LR
 
 ### Grounding and failure behavior
 
-Each question captures the current score, match totals, passing networks and at most **60 recent events**. Future events and final-result fields are excluded from the supplied snapshot. Player summaries describe the current passing-network window, which resets after substitutions or sending-offs; they are not full-match player totals.
+Each question uses the server session's current score, match totals, passing networks and at most **60 recent events**. Future events and final-result fields are excluded from the supplied snapshot. Player summaries describe the current passing-network window, which resets after substitutions or sending-offs; they are not full-match player totals.
 
-These controls improve traceability, but do not prove every sentence is correct. Aggregate comparisons may have no individual event citations. The prototype currently trusts the viewing client's snapshot; public deployment needs authoritative server-side match sessions.
+These controls improve traceability, but do not prove every sentence is correct. Aggregate comparisons may have no individual event citations. **Touchline+ (Phase 1):** the server no longer trusts a browser snapshot. Each replay stream creates a server-side match session, and `/chat` builds its context only from events that session has already emitted to the viewer.
 
 If the model provider fails, the panel displays an error. Replay and analytics continue independently.
 
@@ -218,7 +219,7 @@ A successful real response exits with code 0 and reports `provider=microsoft_fou
 | --- | --- |
 | `GET /matches` | Available StatsBomb Premier League 2015/16 fixtures, omitting final scores. |
 | `GET /matches/{match_id}/stream` | SSE replay: `match`, incremental `update`, optional `insight`, then `complete`. |
-| `POST /chat` | A question, `simple`/`analyst` mode and bounded replay snapshot; returns an answer or explicit provider error. |
+| `POST /chat` | A question, `simple`/`analyst` mode and the `session_id` announced in the stream's first `match` event (Touchline+); the server builds the context. Unknown or expired sessions return 404; sessions with no emitted events return 409. |
 | `GET /health` | Application health. |
 
 ```bash

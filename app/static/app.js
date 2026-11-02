@@ -162,6 +162,10 @@ function stop() {
   $("play").textContent = count ? "Replay again" : "Start replay";
   $("liveBadge").textContent = "Stopped";
 }
+// chat.js keeps the server session id; the server builds chat context from that session.
+function announceSession(data){
+  if(data?.session_id)document.dispatchEvent(new CustomEvent("touchline:session",{detail:{session_id:data.session_id}}));
+}
 function clearState() {
   clearTimeout(momentumTimer); momentumTimer=null;
   eventTimeline = [];
@@ -203,7 +207,7 @@ function start() {
       stop(); $("status").textContent = "An update could not be displayed. Restart the replay.";
     }
   });
-  listen("match", data => {match=data;teamNames(data);send("match",data);$("status").textContent="Replay in progress.";});
+  listen("match", data => {match=data;announceSession(data);teamNames(data);send("match",data);$("status").textContent="Replay in progress.";});
   listen("update", update);
   listen("insight", data => {insights.unshift(data); insights=insights.slice(0,8); drawInsights(); send("insight",data);});
   listen("complete", () => {stop(); clearTimeout(goalTimer); $("goalFlash").hidden=true; $("liveBadge").textContent="Full time";$("status").textContent="Full time. Select a shot to explore the chances.";send("complete",null);});
@@ -642,7 +646,7 @@ function overlaySnapshot() {
 }
 function restoreOverlay(state) {
   clearState();
-  match=state.match; shots=state.shots||[];history=state.history||[];
+  match=state.match;announceSession(match); shots=state.shots||[];history=state.history||[];
   insights=state.insights||[];eventTimeline=state.eventTimeline||[];count=state.count||0;lastUpdate=state.lastUpdate;
   currentPeriod=state.currentPeriod||1;passingNetworks=state.passingNetworks||{};
   if(match)teamNames(match);
@@ -673,7 +677,7 @@ if(channel)channel.onmessage=({data:{type,data}})=>{
   if(overlayOwnStream)return;
   if(type==="snapshot")restoreOverlay(data);
   if(type==="reset"){clearState();$("liveBadge").textContent="Not started";}
-  if(type==="match"){match=data;teamNames(data);$("liveBadge").textContent="Replaying";$("status").textContent="Following the replay in the main tab.";}
+  if(type==="match"){match=data;announceSession(data);teamNames(data);$("liveBadge").textContent="Replaying";$("status").textContent="Following the replay in the main tab.";}
   if(type==="update"&&match){update(data);$("liveBadge").textContent="Replaying";}
   if(type==="insight"){insights.unshift(data);insights=insights.slice(0,8);drawInsights();}
   if(type==="complete"){$("liveBadge").textContent="Full time";$("status").textContent="Full time.";clearTimeout(goalTimer);$("goalFlash").hidden=true;}
