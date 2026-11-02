@@ -42,6 +42,13 @@
       "branch": "phase-5-eval",
       "tests": 120,
       "new_tests": 6
+    },
+    {
+      "phase": 6,
+      "name": "Deployment",
+      "branch": "phase-6-deploy",
+      "tests": 125,
+      "new_tests": 5
     }
   ],
   "charts": [
@@ -75,6 +82,17 @@
         "rag": 5,
         "injection": 7,
         "streaming/cost": 7
+      }
+    },
+    {
+      "file": "phase-6-container-latency.png",
+      "title": "Container latency (local Docker, no key)",
+      "ylabel": "Milliseconds",
+      "values": {
+        "/health": 3,
+        "/matches": 77,
+        "chat (offline)": 44,
+        "chat first RAG lookup": 765
       }
     }
   ]

@@ -47,11 +47,11 @@
       maybeInterpret();
     }
   });
-  async function generate(question, submitted, signal){
+  async function generate(question, submitted, signal, purpose="ask"){
     // Only the session id is sent: the server builds the match context it has emitted.
     if(!sessionId)throw Error("This replay has no server session. Restart the replay.");
     const response=await fetch("/chat",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({question,mode:"simple",session_id:sessionId}),signal});
+      body:JSON.stringify({question,mode:"simple",session_id:sessionId,purpose}),signal});
     const data=await response.json();
     if(!response.ok)throw Error(typeof data.detail==="string"?data.detail:"Could not answer. Try again.");
     return data;
@@ -80,7 +80,7 @@
     controller=new AbortController();attempts++;lastAttempt=Date.now();
     timelineStatus.textContent="Interpreting the latest match evidence…";
     try{
-      const data=await generate("Write a short match interpretation for a timeline note at the current clock. Identify the most meaningful pattern supported by the measured match totals and available events, explain its significance, and state uncertainty where needed. Avoid merely listing actions or inventing tactical causes. If there is not enough evidence yet, say so.",submitted,controller.signal);
+      const data=await generate("Write a short match interpretation for a timeline note at the current clock. Identify the most meaningful pattern supported by the measured match totals and available events, explain its significance, and state uncertainty where needed. Avoid merely listing actions or inventing tactical causes. If there is not enough evidence yet, say so.",submitted,controller.signal,"note");
       if(token!==version)return;
       const note=document.createElement("article");note.className="ai-note";
       const time=document.createElement("time");time.textContent=stamp(submitted);

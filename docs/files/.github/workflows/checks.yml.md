@@ -17,6 +17,8 @@ Uses `Pipfile.lock`, `tests/`, `eval/`.
 ## What changed
 Phase 5: added the eval step.
 
+**Phase 6:** new `docker` job builds the image, runs it and polls `/health` for up to 60 s.
+
 ## Tests
 The workflow is the test runner.
 

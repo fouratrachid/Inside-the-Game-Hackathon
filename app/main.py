@@ -1,5 +1,6 @@
 """HTTP entry point: replay streams, server-side match sessions and match chat."""
 
+import time
 from pathlib import Path
 from typing import Annotated
 
@@ -10,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from app.agent.service import MatchAgent
+from app.catalog import build_source
 from app.chat import ChatQuery, ChatRequest, MatchChat
 from app.config import Settings
 from app.explanations import Audience, ExplanationProvider
@@ -19,13 +21,12 @@ from app.rag.knowledge import build_knowledge
 from app.replay import replay, sse
 from app.sessions import SessionStore
 from app.shifts import ShiftSettings
-from app.source import StatsBombSource
 
 
 def create_app() -> FastAPI:
     settings = Settings()
     application = FastAPI(title=settings.app_name, version="0.1.0")
-    application.state.source = StatsBombSource()
+    application.state.source = build_source(settings)
     application.state.settings = settings
     application.state.chat = MatchChat(settings)
     application.state.tracer = build_tracer(settings)
@@ -36,7 +37,8 @@ def create_app() -> FastAPI:
         settings.chat_rate_limit, settings.chat_rate_window_seconds
     )
     application.state.explanations = ExplanationProvider(settings)
-    application.state.sessions = SessionStore()
+    application.state.sessions = SessionStore(settings.max_sessions, settings.session_ttl_seconds)
+    application.state.notes = {}  # session id → (count, last monotonic time)
     static = Path(__file__).parent / "static"
     application.mount("/static", StaticFiles(directory=static), name="static")
 
@@ -58,6 +60,15 @@ def create_app() -> FastAPI:
             raise HTTPException(404, "Replay session not found or expired. Restart the replay.")
         if session.snapshot() is None:
             raise HTTPException(409, "The replay has not emitted any events yet.")
+        if payload.purpose == "note":
+            # Server-side copy of the UI's timeline cooldowns: at most N notes, spaced out.
+            count, last = application.state.notes.get(session.id, (0, float("-inf")))
+            now = time.monotonic()
+            if count >= settings.note_max_per_session:
+                raise HTTPException(429, "Interpretation limit reached for this replay.")
+            if now - last < settings.note_min_interval_seconds:
+                raise HTTPException(429, "Timeline notes are spaced out. Try again shortly.")
+            application.state.notes[session.id] = (count + 1, now)
         # Applies to questions and automatic timeline notes alike (both call /chat).
         if not application.state.limiter.allow(session.id):
             raise HTTPException(429, "Too many questions for this replay. Wait a moment.")

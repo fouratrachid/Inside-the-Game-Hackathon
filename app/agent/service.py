@@ -13,7 +13,7 @@ from fastapi import HTTPException
 from langchain_core.language_models import BaseChatModel
 
 from app.agent.graph import AgentContext, AgentFailure, run_agent, stream_agent
-from app.agent.llm import PROVIDER_LABELS, build_model, model_name
+from app.agent.llm import PROVIDER_LABELS, build_model, effective_provider, model_name
 from app.config import Settings
 from app.guardrails import check_question
 from app.observability import Tracer
@@ -94,7 +94,7 @@ class MatchAgent:
 
     @property
     def provider(self) -> str:
-        return PROVIDER_LABELS[self.settings.chat_provider]
+        return PROVIDER_LABELS[effective_provider(self.settings)]
 
     def model(self) -> BaseChatModel:
         if self._model is None:
@@ -128,11 +128,15 @@ class MatchAgent:
             kind,
             input={"question": question, "mode": mode},
             session_id=session.id,
-            tags=["langgraph", self.settings.chat_provider, f"match:{view.match.get('match_id')}"],
+            tags=[
+                "langgraph",
+                effective_provider(self.settings),
+                f"match:{view.match.get('match_id')}",
+            ],
             metadata={
                 "match_id": view.match.get("match_id"),
                 "agent": "langgraph",
-                "provider": self.settings.chat_provider,
+                "provider": effective_provider(self.settings),
                 "model": label,
                 "clock": view.clock,
             },

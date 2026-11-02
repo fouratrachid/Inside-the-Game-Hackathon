@@ -28,6 +28,8 @@ Before: sent `snapshot` built from the browser state. Phase 1: sends `session_id
 
 **Phase 4:** Ask mode streams from `/chat/stream` (`streamAnswer` parses SSE from `fetch`), shows a caret while streaming, replaces text with the validated `final` answer or the `error`; shows `Sources:`; the status line shows session tokens and cost (`usageLabel`). Falls back to `/chat` when streaming is unavailable (`GAME_AGENT=maf`). Timeline notes still use `/chat`.
 
+**Phase 6:** timeline notes send `purpose: "note"`.
+
 ## Tests
 Server-side tests in `tests/test_sessions.py` (client snapshot ignored); syntax via `node --check`.
 

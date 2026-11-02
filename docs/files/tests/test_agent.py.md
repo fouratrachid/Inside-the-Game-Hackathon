@@ -38,6 +38,8 @@ New in Phase 2.
 
 **Phase 4:** `ask()` passes the session (the service now tracks usage on it); tool results are unwrapped from `<tool_result>` blocks.
 
+**Phase 6:** provider test covers the offline fallback and `chat_fallback_offline=False` → 503.
+
 ## Tests
 20 tests.
 

@@ -37,6 +37,8 @@ Before: `/chat` accepted `ChatRequest` with a browser `snapshot`. Phase 1: `Chat
 
 **Phase 5:** the original MAF path rejects `offline` (and `ollama`) with 503.
 
+**Phase 6:** source from `build_source(settings)`; `SessionStore(GAME_MAX_SESSIONS, GAME_SESSION_TTL_SECONDS)`; `purpose: "note"` requests get a per-session cap and minimum spacing (`GAME_NOTE_MAX_PER_SESSION`, `GAME_NOTE_MIN_INTERVAL_SECONDS`) on top of the general rate limit.
+
 ## Tests
 `tests/test_app.py`, `tests/test_sessions.py`.
 

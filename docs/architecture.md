@@ -1,6 +1,6 @@
 # Touchline+ architecture
 
-_Updated at the end of every phase. Current state: **Phase 5** (evaluation harness)._
+_Updated at the end of every phase. Current state: **Phase 6** (deployment)._
 
 ## System
 
@@ -99,4 +99,16 @@ flowchart LR
     C1 & C2 & C3 & C4 --> M[metrics + judge]
     M --> O[results.json / .md / .png]
     M --> H[human_grading.csv] --> A[agreement.py]
+```
+
+## Deployment (Phase 6)
+
+```mermaid
+flowchart LR
+    Repo[GitHub] --> CI[Actions: lint · tests · eval subset · docker build + /health]
+    Repo --> Render[Render free web service<br/>render.yaml]
+    Render --> Img[Docker image<br/>non-root · $PORT · healthcheck]
+    Img --> App[FastAPI app]
+    App --> Src[GAME_SOURCE=both<br/>synthetic + StatsBomb]
+    App --> Chat[LangGraph agent<br/>Gemini or offline fallback]
 ```

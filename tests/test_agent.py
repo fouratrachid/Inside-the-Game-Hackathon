@@ -190,7 +190,9 @@ def test_providers_build_without_network(provider, cls):
     if provider == "ollama":
         assert model.model == "qwen2.5:7b-instruct" and model.base_url == "http://127.0.0.1:11434"
     with pytest.raises(HTTPException):
-        build_model(Settings(chat_provider="gemini", gemini_api_key=""))
+        build_model(Settings(gemini_api_key="", chat_fallback_offline=False))
+    # Phase 6: without a key the public demo falls back to the labelled offline baseline.
+    assert type(build_model(Settings(gemini_api_key=""))).__name__ == "OfflineAnalyst"
 
 
 class Upstream(Exception):

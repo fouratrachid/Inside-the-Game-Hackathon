@@ -40,6 +40,14 @@ class Settings(BaseSettings):
     cache_max_entries: int = Field(default=256, ge=0)
     session_budget_usd: float = Field(default=0.10, ge=0)  # 0 disables the budget.
     model_prices: dict[str, tuple[float, float]] = Field(default_factory=dict)
+    # Touchline+ Phase 6: deployment.
+    source: Literal["statsbomb", "synthetic", "both"] = "statsbomb"
+    # With the Gemini provider and no key, answer with the offline baseline instead of 503.
+    chat_fallback_offline: bool = True
+    max_sessions: int = Field(default=500, ge=1)
+    session_ttl_seconds: float = Field(default=3 * 3600, gt=0)
+    note_max_per_session: int = Field(default=12, ge=0)  # Matches the UI's 12-note limit.
+    note_min_interval_seconds: float = Field(default=20, ge=0)  # Matches the UI cooldown.
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = "gemini-3.8-flash"
     explanation_provider: Literal["off", "template", "foundry"] = "template"

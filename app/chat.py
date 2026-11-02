@@ -23,6 +23,8 @@ class ChatQuery(BaseModel):
     question: str = Field(min_length=1, max_length=500)
     mode: Literal["simple", "analyst"] = "simple"
     session_id: str = Field(pattern=SESSION_ID_PATTERN)
+    # "note" = automatic timeline interpretation (stricter server-side cooldown); "ask" = user.
+    purpose: Literal["ask", "note"] = "ask"
 
 
 class ChatRequest(BaseModel):

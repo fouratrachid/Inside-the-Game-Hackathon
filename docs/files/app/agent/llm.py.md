@@ -26,6 +26,8 @@ New in Phase 2.
 
 **Phase 5:** provider `offline` → `OfflineAnalyst` (label "Offline rule-based baseline", model name `offline-rule-based`).
 
+**Phase 6:** `effective_provider()` — Gemini with no key falls back to the offline baseline when `GAME_CHAT_FALLBACK_OFFLINE=true` (default), so a public demo never shows a 503.
+
 ## Tests
 `test_providers_build_without_network` builds each provider offline and checks the 503 without a Gemini key.
 

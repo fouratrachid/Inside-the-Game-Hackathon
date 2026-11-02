@@ -23,6 +23,8 @@ Used by `app/main.py`; depends on `app/chat_workflow.py`, `app/config.py`, `app/
 ## What changed
 Phase 1: added `ChatQuery`; `ChatRequest` documented as internal-only. Model call logic unchanged.
 
+**Phase 6:** `ChatQuery.purpose` (`ask` | `note`).
+
 ## Tests
 `tests/test_chat.py`, `tests/test_foundry_chat.py` (original), `tests/test_sessions.py` (ChatQuery handling).
 

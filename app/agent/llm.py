@@ -17,17 +17,28 @@ PROVIDER_LABELS = {
 }
 
 
+def effective_provider(settings: Settings) -> str:
+    """The provider actually used: Gemini without a key falls back to the offline baseline."""
+    if (
+        settings.chat_provider == "gemini"
+        and not settings.gemini_api_key.get_secret_value()
+        and settings.chat_fallback_offline
+    ):
+        return "offline"
+    return settings.chat_provider
+
+
 def model_name(settings: Settings) -> str:
     return {
         "gemini": settings.gemini_model,
         "foundry": settings.foundry_deployment,
         "ollama": settings.ollama_model,
         "offline": "offline-rule-based",
-    }[settings.chat_provider]
+    }[effective_provider(settings)]
 
 
 def build_model(settings: Settings) -> BaseChatModel:
-    provider = settings.chat_provider
+    provider = effective_provider(settings)
     if provider == "offline":
         from app.agent.offline import OfflineAnalyst
 

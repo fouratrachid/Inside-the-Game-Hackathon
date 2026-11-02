@@ -10,5 +10,6 @@ _Running summary, updated after every phase._
 | 3 — Momentum shifts | `phase-3-momentum-shifts` | 91 | [phase-3](phases/phase-3.md) |
 | 4 — Production AI | `phase-4-production-ai` | 114 | [phase-4](phases/phase-4.md) |
 | 5 — Evaluation | `phase-5-eval` | 120 | [phase-5](phases/phase-5.md) |
+| 6 — Deployment | `phase-6-deploy` | 125 | [phase-6](phases/phase-6.md) |
 
 ![Tests per phase](images/tests-per-phase.png)

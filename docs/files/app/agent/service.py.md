@@ -34,6 +34,8 @@ flowchart LR
     P --> Run[run_agent / stream_agent] --> F[_finish] --> A[answer + usage]
 ```
 
+**Phase 6:** labels, tags and prices use `effective_provider()`.
+
 ## Tests
 `tests/test_agent.py` (`test_provider_errors_are_sanitized`, `test_chat_endpoint_returns_tool_trace` and the agent tests).
 
