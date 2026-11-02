@@ -209,8 +209,14 @@ class MatchTools:
         }
         latest = (self.view.latest or {}).get("momentum") or {}
         leader = max(xt, key=xt.get) if xt and max(xt.values()) > 0 else None
+        shifts = [
+            {k: shift[k] for k in ("id", "minute", "since_minute", "to_team", "narration")}
+            | {"cited_event_ids": shift["cited_event_ids"]}
+            for shift in self.view.shifts[-3:]
+        ]
         return {
             "window": f"last {window_min} minutes of period {clock['period']}",
+            "recent_shifts": shifts,
             "xt_added": xt,
             "leading_team": leader,
             "current_proxy": {k: latest.get(k) for k in ("home", "away", "net_difference")},
@@ -243,7 +249,7 @@ DESCRIPTIONS = {
     "shot-time player positions.",
     "find_sequence": "The possession chain (event IDs and actions) that ends at event_id.",
     "get_momentum": "xT added per team over the last window_min minutes of the current period, "
-    "plus the current momentum proxy.",
+    "the current momentum proxy and recent detected momentum shifts with cited event IDs.",
 }
 
 

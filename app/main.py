@@ -15,6 +15,7 @@ from app.config import Settings
 from app.explanations import Audience, ExplanationProvider
 from app.replay import replay
 from app.sessions import SessionStore
+from app.shifts import ShiftSettings
 from app.source import StatsBombSource
 
 
@@ -98,6 +99,12 @@ def create_app() -> FastAPI:
                 application.state.explanations if insights else None,
                 audience,
                 session,
+                ShiftSettings(
+                    threshold=settings.shift_threshold,
+                    window_seconds=settings.shift_window_seconds,
+                    hold_seconds=settings.shift_hold_seconds,
+                    debounce_seconds=settings.shift_debounce_seconds,
+                ),
             ),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},

@@ -74,6 +74,7 @@ class SessionView:
     players: dict
     minutes: list
     snapshot: dict | None
+    shifts: tuple = ()
 
     def event_ids(self) -> set:
         return {record["event"].get("id") for record in self.history}
@@ -91,6 +92,7 @@ class MatchSession:
     history: list = field(default_factory=list)
     players: PlayerAccumulator = field(default_factory=PlayerAccumulator)
     minutes: MinuteHistory = field(default_factory=MinuteHistory)
+    shifts: list = field(default_factory=list)
 
     def record(self, event: dict, analytics: dict) -> bool:
         """Record an emitted update. Call only after its frame was yielded. Idempotent."""
@@ -112,6 +114,11 @@ class MatchSession:
         self.touched = time.monotonic()
         return True
 
+    def record_shift(self, shift: dict) -> None:
+        """Store a momentum shift after its SSE frame was yielded."""
+        if all(existing["id"] != shift["id"] for existing in self.shifts):
+            self.shifts.append(shift)
+
     def snapshot(self) -> dict | None:
         """The chat context: latest stats plus the last 60 emitted events, newest first."""
         if self.latest is None:
@@ -131,6 +138,9 @@ class MatchSession:
                 "momentum": latest.get("momentum"),
                 "passing_network": latest.get("passing_network"),
                 "events": list(self.events),
+                "momentum_shifts": [
+                    {k: v for k, v in shift.items() if k != "chain"} for shift in self.shifts[-3:]
+                ],
             }
         )
 
@@ -145,6 +155,7 @@ class MatchSession:
             players=self.players.snapshot(),
             minutes=self.minutes.snapshot(),
             snapshot=self.snapshot(),
+            shifts=tuple(self.shifts),
         )
 
 

@@ -21,6 +21,26 @@
       "branch": "phase-2-agent",
       "tests": 85,
       "new_tests": 20
+    },
+    {
+      "phase": 3,
+      "name": "Momentum shifts",
+      "branch": "phase-3-momentum-shifts",
+      "tests": 91,
+      "new_tests": 6
+    }
+  ],
+  "charts": [
+    {
+      "file": "phase-3-shift-thresholds.png",
+      "title": "Momentum shifts detected in the synthetic match",
+      "ylabel": "Shifts (seed 42, 90 min)",
+      "values": {
+        "0.02": 6,
+        "0.03 (default)": 6,
+        "0.05": 4,
+        "0.08": 3
+      }
     }
   ]
 }

@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     ollama_model: str = "qwen2.5:7b-instruct"
     agent_max_tool_rounds: int = Field(default=4, ge=1, le=8)
     chat_timeout_seconds: float = Field(default=45, gt=0, le=300)
+    # Touchline+ momentum shifts (Phase 3).
+    shift_threshold: float = Field(default=0.03, gt=0)
+    shift_window_seconds: float = Field(default=300, gt=0)
+    shift_hold_seconds: float = Field(default=180, ge=0)
+    shift_debounce_seconds: float = Field(default=300, ge=0)
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = "gemini-3.8-flash"
     explanation_provider: Literal["off", "template", "foundry"] = "template"

@@ -17,6 +17,21 @@
   }
   document.addEventListener("touchline:replay-reset",clearChat);
   document.addEventListener("touchline:session",event=>{sessionId=event.detail.session_id;});
+  // Phase 3: every note can be clicked to light up the actions behind it on the pitch.
+  function clickable(note, detail){
+    note.classList.add("clickable");note.tabIndex=0;note.setAttribute("role","button");
+    const show=()=>document.dispatchEvent(new CustomEvent("touchline:highlight",{detail}));
+    note.addEventListener("click",show);
+    note.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();show();}});
+  }
+  document.addEventListener("touchline:shift",({detail:shift})=>{
+    const note=document.createElement("article");note.className="ai-note shift-note";
+    const time=document.createElement("time");time.textContent=`${shift.since_minute}′ → ${shift.minute}′ · Momentum shift`;
+    const text=document.createElement("p");text.textContent=shift.narration;
+    const source=document.createElement("small");source.textContent="Detected from xT added · click to show the actions";
+    note.append(time,text,source);clickable(note,{shift});
+    timeline.prepend(note);timeline.scrollTop=0;
+  });
   document.addEventListener("touchline:context",event=>{context=event.detail;maybeInterpret();});
   selector.addEventListener("change",()=>{
     version++;controller?.abort();controller=null;send.disabled=false;
@@ -79,6 +94,8 @@
         note.append(evidence);
       }
       const used=trace(data);if(used)note.append(used);
+      const cited=data.cited_event_ids||data.evidence_event_ids||[];
+      if(cited.length)clickable(note,{event_ids:cited,label:`AI note · ${stamp(submitted)}`,detail:"Cited actions, numbered in match order"});
       timeline.prepend(note);timeline.scrollTop=0;
       lastNoteClock=clock;lastNoteKey=key;
       timelineStatus.textContent="Watching for the next match update.";

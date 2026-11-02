@@ -23,6 +23,10 @@ let teamLogos = {};
 let selectedShotId = null;
 let followLatestShot = true;
 let currentPeriod = 1;
+// Touchline+ Phase 3: momentum shifts, emitted-event positions and the active chain highlight.
+let shifts = [];
+const eventIndex = new Map();
+let highlight = null;
 const channel = "BroadcastChannel" in window ? new BroadcastChannel("touchline-overlay") : null;
 const send = (type, data) => {if(!overlayMode)channel?.postMessage({type, data});};
 function node(tag, attrs = {}, text = "") {
@@ -169,6 +173,7 @@ function announceSession(data){
 function clearState() {
   clearTimeout(momentumTimer); momentumTimer=null;
   eventTimeline = [];
+  shifts = []; eventIndex.clear(); highlight = null; $("clearHighlight").hidden = true;
   shots = []; history = []; insights = []; count = 0; lastUpdate = null; selectedShotId=null;
   document.dispatchEvent(new CustomEvent("touchline:replay-reset"));
   clearGoalHighlight();
@@ -209,6 +214,7 @@ function start() {
   });
   listen("match", data => {match=data;announceSession(data);teamNames(data);send("match",data);$("status").textContent="Replay in progress.";});
   listen("update", update);
+  listen("momentum_shift", onShift);
   listen("insight", data => {insights.unshift(data); insights=insights.slice(0,8); drawInsights(); send("insight",data);});
   listen("complete", () => {stop(); clearTimeout(goalTimer); $("goalFlash").hidden=true; $("liveBadge").textContent="Full time";$("status").textContent="Full time. Select a shot to explore the chances.";send("complete",null);});
   connection.onerror = () => {
@@ -252,6 +258,8 @@ function update(data) {
   drawPassingNetwork();
   const event = data.event, kind = event.type.name;
   recordTimelineEvent(data);
+  eventIndex.set(event.id,{id:event.id,period:event.period,minute:event.minute,second:event.second,
+    team_id:event.team?.id,type:kind,player:event.player?.name,location:event.location,end_location:data.end_location});
   drawInsights();
   recordScorelineGoal(data);
   $("clock").textContent = clock(event); $("eventCount").textContent = `${count.toLocaleString()} events`;
@@ -261,7 +269,7 @@ function update(data) {
     $("awayScore").textContent = data.score[String(match.away_team.id)] || 0;
   }
   if(currentPeriod!==event.period){currentPeriod=event.period;drawShots();}
-  if(followLatestShot)renderEventPitch(data);
+  if(followLatestShot&&!highlight)renderEventPitch(data);
   const previousPoint=history[history.length-1];
   const elapsed=previousPoint
     ? previousPoint.elapsed+Math.max(0,data.momentum.period_seconds-(previousPoint.period===event.period?previousPoint.period_seconds:0))
@@ -270,13 +278,73 @@ function update(data) {
   history.push(point); scheduleMomentum();
   if (data.shot_added && !shots.some(s=>s.event_id===data.shot_added.event_id)) {
     shots.push({...data.shot_added,elapsed}); drawShots(); scheduleMomentum();
-    if(followLatestShot)selectShot(data.shot_added,false);
+    if(followLatestShot&&!highlight)selectShot(data.shot_added,false);
     if(followLatestShot&&data.shot_added.outcome==="Goal") {$("goalFlash").hidden=false;clearTimeout(goalTimer);goalTimer=setTimeout(()=>$("goalFlash").hidden=true,1800);}
   }
   send("update",data);
   updateBroadcastVisibility();
   if(overlayMode)document.dispatchEvent(new CustomEvent("touchline:progress",{detail:{seconds:elapsed}}));
 }
+function onShift(data) {
+  if(shifts.some(s=>s.id===data.id))return;
+  const point=history.find(p=>p.event_id===data.trigger_event_id)||history[history.length-1];
+  shifts.push({...data,elapsed:point?.elapsed||0});
+  scheduleMomentum();
+  document.dispatchEvent(new CustomEvent("touchline:shift",{detail:data}));
+  send("shift",data);
+}
+// Draw a chain of emitted actions as numbered, animated arrows on the pitch.
+function highlightChain(groups, label, detail) {
+  const svg=$("livePitch");
+  highlight={label};
+  pitch(svg);
+  const defs=node("defs");
+  for(const team of ["home","away"]){
+    const marker=node("marker",{id:`chain-arrow-${team}`,viewBox:"0 0 6 6",refX:5,refY:3,markerWidth:4,markerHeight:4,orient:"auto-start-reverse"});
+    marker.append(node("path",{d:"M0,0 L6,3 L0,6 Z",fill:colors[team]}));defs.append(marker);
+  }
+  svg.append(defs);
+  let step=0;
+  groups.forEach(group=>{
+    const points=group.filter(e=>e?.location?.length>=2);
+    points.forEach((event,index)=>{
+      const team=side(event.team_id), color=colors[team];
+      const [x,y]=toPitch(event.location,event.team_id,event.period);
+      const next=points[index+1];
+      const target=event.end_location?.length>=2?event.end_location:next?.location;
+      step++;
+      if(target){
+        const [x2,y2]=toPitch(target,event.team_id,event.period);
+        svg.append(node("line",{x1:x,y1:y,x2,y2,pathLength:1,class:"chain-arrow",style:`stroke:${color};animation-delay:${step*0.25}s`,"marker-end":`url(#chain-arrow-${team})`}));
+      }
+      const badge=node("g",{class:"chain-step",style:`animation-delay:${step*0.25}s`,transform:`translate(${x} ${y})`});
+      badge.append(node("title",{},`${step}. ${event.minute}′ ${event.type||"Action"}${event.player?" · "+event.player:""}`));
+      badge.append(node("circle",{r:2.6,fill:color,stroke:"white","stroke-width":.5}),node("text",{y:.95,"text-anchor":"middle"},String(step)));
+      svg.append(badge);
+    });
+  });
+  if(!step)svg.append(node("text",{x:60,y:42,"text-anchor":"middle",class:"chain-empty"},"No recorded positions for these events"));
+  $("eventLabel").textContent=label;
+  $("eventPlayer").textContent=detail||"Numbered in match order · event positions only";
+  svg.setAttribute("aria-label",`${label}: ${step} highlighted actions`);
+  $("shotFramePanel").hidden=true;
+  $("clearHighlight").hidden=false;
+}
+function clearHighlight() {
+  highlight=null;$("clearHighlight").hidden=true;
+  if(lastUpdate)renderEventPitch(lastUpdate);else pitch($("livePitch"));
+}
+function highlightShift(shift) {
+  const groups=shift.chain||shift.sequences.map(ids=>ids.map(id=>eventIndex.get(id)));
+  highlightChain(groups,`Momentum shift · ${shift.to_team.name} from ${shift.since_minute}′`,shift.players.slice(0,3).join(", "));
+}
+document.addEventListener("touchline:highlight",({detail})=>{
+  if(detail.shift)return highlightShift(detail.shift);
+  const events=(detail.event_ids||[]).map(id=>eventIndex.get(id)).filter(Boolean)
+    .sort((a,b)=>a.period-b.period||a.minute-b.minute||a.second-b.second);
+  highlightChain([events],detail.label||"Cited actions",detail.detail);
+});
+$("clearHighlight").onclick=clearHighlight;
 function renderEventPitch(data) {
   const event=data.event;
   $("shotFramePanel").hidden=true;
@@ -293,6 +361,7 @@ function renderEventPitch(data) {
   }
 }
 function selectShot(shot, inspect=true) {
+  if(inspect&&highlight){highlight=null;$("clearHighlight").hidden=true;}
   if(inspect){
     followLatestShot=false;
     clearTimeout(goalTimer); $("goalFlash").hidden=true;
@@ -587,6 +656,20 @@ function drawMomentum() {
     marker.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();inspect();}};
     svg.append(marker);
   });
+  // Momentum shifts: arrows on the centre line pointing towards the team that took over.
+  shifts.forEach(shift=>{
+    const team=side(shift.to_team.id), home=team==="home", color=colors[team];
+    const x=Math.max(10,Math.min(890,xAt(shift)));
+    const label=`${shift.minute}′ momentum shift to ${shift.to_team.name} (from ${shift.since_minute}′). Show the actions.`;
+    const marker=node("g",{class:"shift-marker",transform:`translate(${x} 75)`,tabindex:0,role:"button","aria-label":label,"data-shift-id":shift.id});
+    marker.append(node("title",{},label));
+    marker.append(node("circle",{r:11,fill:"white",stroke:color,"stroke-width":1.5}));
+    marker.append(node("path",{d:home?"M0,-7 L6,3 L-6,3 Z":"M0,7 L6,-3 L-6,-3 Z",fill:color}));
+    const show=()=>highlightShift(shift);
+    marker.onclick=show;
+    marker.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show();}};
+    svg.append(marker);
+  });
   svg.setAttribute("aria-label",measured.length?`Recent attacking threat: home above, away below. Four-minute, recency-weighted xT proxy; not scoring probability. Football markers identify goals.`:"xT momentum: waiting for data");
 }
 function recordTimelineEvent(data) {
@@ -641,6 +724,7 @@ $("method").onclick=()=>{$("methodNote").hidden=!$("methodNote").hidden;$("metho
 document.querySelectorAll('[data-filter]').forEach(button=>button.onclick=()=>{filter=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});drawShots();});
 function overlaySnapshot() {
   return {match,shots,history,insights,eventTimeline,count,lastUpdate,currentPeriod,passingNetworks,
+    shifts,events:Array.from(eventIndex.values()),
     liveBadge:$("liveBadge").textContent,
     scorers:["home","away"].map(team=>Array.from($(team+"Scorers").children,entry=>entry.textContent))};
 }
@@ -648,7 +732,9 @@ function restoreOverlay(state) {
   clearState();
   match=state.match;announceSession(match); shots=state.shots||[];history=state.history||[];
   insights=state.insights||[];eventTimeline=state.eventTimeline||[];count=state.count||0;lastUpdate=state.lastUpdate;
-  currentPeriod=state.currentPeriod||1;passingNetworks=state.passingNetworks||{};
+  currentPeriod=state.currentPeriod||1;
+  for(const event of state.events||[])eventIndex.set(event.id,event);
+  for(const shift of state.shifts||[]){shifts.push(shift);document.dispatchEvent(new CustomEvent("touchline:shift",{detail:shift}));}passingNetworks=state.passingNetworks||{};
   if(match)teamNames(match);
   for(const [index,team] of ["home","away"].entries()){
     const list=$(team+"Scorers");
@@ -679,6 +765,7 @@ if(channel)channel.onmessage=({data:{type,data}})=>{
   if(type==="reset"){clearState();$("liveBadge").textContent="Not started";}
   if(type==="match"){match=data;announceSession(data);teamNames(data);$("liveBadge").textContent="Replaying";$("status").textContent="Following the replay in the main tab.";}
   if(type==="update"&&match){update(data);$("liveBadge").textContent="Replaying";}
+  if(type==="shift"&&match)onShift(data);
   if(type==="insight"){insights.unshift(data);insights=insights.slice(0,8);drawInsights();}
   if(type==="complete"){$("liveBadge").textContent="Full time";$("status").textContent="Full time.";clearTimeout(goalTimer);$("goalFlash").hidden=true;}
 };

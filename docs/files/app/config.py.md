@@ -18,6 +18,8 @@ Read by almost every module.
 ## What changed
 See above; original fields unchanged.
 
+**Phase 3:** `shift_threshold`, `shift_window_seconds`, `shift_hold_seconds`, `shift_debounce_seconds`.
+
 ## Tests
 `test_providers_build_without_network`, `test_maf_setting_still_runs_the_original_workflow`.
 

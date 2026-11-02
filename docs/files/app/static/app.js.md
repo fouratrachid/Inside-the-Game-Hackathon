@@ -26,6 +26,25 @@ Loaded by `index.html` and `overlay.html`; talks to `/matches`, `/matches/{id}/s
 ## What changed
 Before: chat context was published as a full snapshot via `touchline:context`. Phase 1: adds `announceSession` and the `touchline:session` event (the `touchline:context` event remains for UI timing checks in chat.js).
 
+**Phase 3:**
+- `onShift` stores shifts (with chart position), redraws momentum, dispatches `touchline:shift`, relays to the overlay.
+- `eventIndex` keeps positions of every emitted event so cited events can be drawn.
+- `drawMomentum` adds clickable arrow markers on the centre line, pointing to the team that took over.
+- `highlightChain(groups, label)` draws numbered, animated arrows (`.chain-arrow`, `.chain-step`) for each sequence; `highlightShift`, the `touchline:highlight` listener and `clearHighlight` (Clear highlight button). While a highlight is active, live updates and auto-followed shots do not overwrite the pitch; selecting a shot clears it.
+- Overlay snapshot/restore carries shifts and event positions.
+
+```mermaid
+sequenceDiagram
+    participant S as SSE
+    participant A as app.js
+    participant C as chat.js
+    S->>A: momentum_shift
+    A->>A: marker on momentum chart
+    A->>C: touchline:shift → clickable note
+    C->>A: touchline:highlight {shift | event_ids}
+    A->>A: highlightChain on #livePitch
+```
+
 ## Tests
 No JS test runner in this repo; behaviour covered end-to-end by `tests/test_sessions.py` on the server side and `node --check` for syntax.
 

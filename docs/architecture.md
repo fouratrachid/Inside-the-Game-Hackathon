@@ -1,6 +1,6 @@
 # Touchline+ architecture
 
-_Updated at the end of every phase. Current state: **Phase 2** (LangGraph agent)._
+_Updated at the end of every phase. Current state: **Phase 3** (explainable momentum shifts)._
 
 ## System
 
@@ -10,6 +10,9 @@ flowchart LR
     Main -->|create| Store[SessionStore]
     Main --> Replay[app/replay.py]
     Replay --> Analytics[MatchAnalytics]
+    Replay -->|after yield| Shifts[app/shifts.py<br/>ShiftDetector]
+    Shifts -->|SSE momentum_shift| Browser
+    Shifts -->|record_shift| Session
     Replay -->|record after yield| Session[MatchSession<br/>history · players · minutes]
     Store --- Session
     Replay -->|SSE match+session_id / update| Browser[app.js + chat.js]
@@ -44,4 +47,19 @@ sequenceDiagram
     L-->>G: {text, cited_event_ids, snapshot_minute}
     G->>G: answer → validator (ids emitted? minute ≤ clock? retry once)
     G-->>B: answer + evidence + tools_used trace
+```
+
+## Momentum shift flow (Phase 3)
+
+```mermaid
+sequenceDiagram
+    participant R as replay_updates
+    participant D as ShiftDetector
+    participant B as Browser (app.js / chat.js)
+    R-->>B: update (event N)
+    R->>D: consume(update N)
+    D-->>R: shift (gap held 3 min)
+    R-->>B: momentum_shift {sequences, chain, narration}
+    B->>B: chart marker + timeline note
+    B->>B: click → numbered arrows on pitch
 ```

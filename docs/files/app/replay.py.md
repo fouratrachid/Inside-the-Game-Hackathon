@@ -28,6 +28,8 @@ Called by `app/main.py` `/matches/{id}/stream`; depends on `app/analytics.py`, `
 ## What changed
 Before: no sessions. Phase 1: optional `session` parameter on both generators, `session_id` in the first `match` frame, the update payload is built into a variable so it can be recorded after the yield.
 
+**Phase 3:** a `ShiftDetector` consumes each update after it is yielded; a confirmed shift is yielded as a `momentum_shift` SSE frame and then stored with `session.record_shift`. Optional `shift_settings` parameter on both generators.
+
 ## Tests
 `tests/test_replay.py` (original behaviour), `tests/test_sessions.py` (session id, recording order, no future leakage).
 

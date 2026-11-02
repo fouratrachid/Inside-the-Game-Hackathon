@@ -31,6 +31,8 @@ Before: `/chat` accepted `ChatRequest` with a browser `snapshot`. Phase 1: `Chat
 
 **Phase 2:** `/chat` dispatches on `GAME_AGENT`: `langgraph` → `MatchAgent.ask(question, mode, session.view())`; `maf` → original workflow (Ollama rejected with 503 there), with `tools_used` normalised to `[{tool, args}]`.
 
+**Phase 3:** passes `ShiftSettings` built from settings to `replay`.
+
 ## Tests
 `tests/test_app.py`, `tests/test_sessions.py`.
 

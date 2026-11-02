@@ -17,6 +17,8 @@ Loaded by `index.html` and `overlay.html`.
 ## What changed
 Added the `.chat-trace` rules only.
 
+**Phase 3:** `.pitch-actions`, `.shift-marker`, `.chain-arrow` (dash animation via `pathLength=1`), `.chain-step`, `.ai-note.clickable`, `.shift-note`, reduced-motion fallback.
+
 ## Tests
 Visual only.
 

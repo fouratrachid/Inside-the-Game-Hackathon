@@ -42,6 +42,8 @@ Used by `app/agent/graph.py`; depends on `app/sessions.py` (`SessionView`) and `
 ## What changed
 New in Phase 2.
 
+**Phase 3:** `get_momentum` returns `recent_shifts` (id, minutes, team, narration, cited ids) so the agent can explain detected shifts.
+
 ## Tests
 `tests/test_agent.py`: tool choice per question, tool errors returned to the model, frozen view, and **`test_no_tool_returns_events_after_the_session_clock`** (runs every tool, including on a future id, and checks every mentioned id was emitted).
 

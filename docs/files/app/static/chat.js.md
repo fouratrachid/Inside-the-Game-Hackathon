@@ -24,6 +24,8 @@ Before: sent `snapshot` built from the browser state. Phase 1: sends `session_id
 
 **Phase 2:** `trace(data)` renders `used: tool(args) → tool(args)` under answers and timeline notes; the status line uses `data.orchestrator`.
 
+**Phase 3:** shift notes (`.shift-note`) are added to the AI timeline from `touchline:shift`; `clickable()` makes shift notes and cited AI notes dispatch `touchline:highlight` (click or Enter/Space).
+
 ## Tests
 Server-side tests in `tests/test_sessions.py` (client snapshot ignored); syntax via `node --check`.
 

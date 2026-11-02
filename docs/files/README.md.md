@@ -24,6 +24,8 @@ Phase 1: Changes entry added; the paragraph that said the prototype trusts the c
 
 **Phase 2:** Changes entry and a LangGraph section before the original MAF section.
 
+**Phase 3:** Changes entry.
+
 ## Tests
 Documentation only; no tests.
 

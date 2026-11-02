@@ -8,6 +8,7 @@ from copy import deepcopy
 from app.analytics import MatchAnalytics, period_seconds
 from app.explanations import Audience, ExplanationProvider
 from app.sessions import MatchSession
+from app.shifts import ShiftDetector, ShiftSettings
 
 
 def sse(kind: str, payload: dict, event_id: str | None = None) -> str:
@@ -21,8 +22,10 @@ async def replay_updates(
     speed: float,
     disconnected,
     session: MatchSession | None = None,
+    shift_settings: ShiftSettings | None = None,
 ):
     state = MatchAnalytics(match["home_team"]["id"], match["away_team"]["id"])
+    shifts = ShiftDetector(match, shift_settings)
     yield sse(
         "match",
         {
@@ -101,6 +104,12 @@ async def replay_updates(
         # Resuming here means the frame was handed on, so the session may now use it.
         if session is not None:
             session.record(payload["event"], payload)
+        # Detection runs only on emitted updates, so a shift never references later events.
+        shift = shifts.consume(payload)
+        if shift is not None:
+            yield sse("momentum_shift", shift, shift["id"])
+            if session is not None:
+                session.record_shift(shift)
     yield sse("complete", {"match_id": match["match_id"]})
 
 
@@ -112,8 +121,9 @@ async def replay(
     provider: ExplanationProvider | None = None,
     audience: Audience = "casual",
     session: MatchSession | None = None,
+    shift_settings: ShiftSettings | None = None,
 ):
-    updates = replay_updates(events, match, speed, disconnected, session)
+    updates = replay_updates(events, match, speed, disconnected, session, shift_settings)
     if provider is None or provider.settings.explanation_provider == "off":
         async for frame in updates:
             yield frame
