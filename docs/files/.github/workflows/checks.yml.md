@@ -19,6 +19,8 @@ Phase 5: added the eval step.
 
 **Phase 6:** new `docker` job builds the image, runs it and polls `/health` for up to 60 s.
 
+**Phase 7:** new `mobile` job: Node 22, `npm ci`, `npx tsc --noEmit`, `npx jest --ci` in `mobile/`.
+
 ## Tests
 The workflow is the test runner.
 

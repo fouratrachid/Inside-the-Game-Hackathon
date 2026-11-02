@@ -49,6 +49,13 @@
       "branch": "phase-6-deploy",
       "tests": 125,
       "new_tests": 5
+    },
+    {
+      "phase": 7,
+      "name": "Mobile app",
+      "branch": "phase-7-mobile",
+      "tests": 125,
+      "new_tests": 0
     }
   ],
   "charts": [
@@ -94,6 +101,18 @@
         "chat (offline)": 44,
         "chat first RAG lookup": 765
       }
+    },
+    {
+      "file": "phase-7-mobile-tests.png",
+      "title": "Mobile app tests by suite (Jest + RNTL)",
+      "ylabel": "Tests",
+      "values": {
+        "state": 5,
+        "MomentumChart": 3,
+        "ChatPanel": 4,
+        "App flow": 3
+      }
     }
-  ]
+  ],
+  "mobile_tests": 15
 }

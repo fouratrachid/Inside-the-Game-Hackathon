@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Touchline+",
+    "slug": "touchline-plus",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

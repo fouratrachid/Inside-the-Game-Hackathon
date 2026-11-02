@@ -4,7 +4,7 @@ One page per file created or changed by Touchline+, mirroring the repository pat
 
 | File | Doc | Phase(s) |
 | --- | --- | --- |
-| `README.md` | [README.md.md](README.md.md) | 0, 1, 2, 3, 4, 5, 6 |
+| `README.md` | [README.md.md](README.md.md) | 0, 1, 2, 3, 4, 5, 6, 7 |
 | `Pipfile` | [Pipfile.md](Pipfile.md) | 0, 2, 4 |
 | `Pipfile.lock` | [Pipfile.lock.md](Pipfile.lock.md) | 0, 2, 4 |
 | `tools/charts.py` | [tools/charts.py.md](tools/charts.py.md) | 0 |
@@ -48,9 +48,10 @@ One page per file created or changed by Touchline+, mirroring the repository pat
 | `app/agent/offline.py` | [app/agent/offline.py.md](app/agent/offline.py.md) | 5 |
 | `eval/ (all files)` | [eval/README.md](eval/README.md) | 5 |
 | `tests/test_eval.py` | [tests/test_eval.py.md](tests/test_eval.py.md) | 5 |
-| `.github/workflows/checks.yml` | [.github/workflows/checks.yml.md](.github/workflows/checks.yml.md) | 5, 6 |
+| `.github/workflows/checks.yml` | [.github/workflows/checks.yml.md](.github/workflows/checks.yml.md) | 5, 6, 7 |
 | `Dockerfile` | [Dockerfile.md](Dockerfile.md) | 6 |
 | `.dockerignore` | [.dockerignore.md](.dockerignore.md) | 6 |
 | `render.yaml` | [render.yaml.md](render.yaml.md) | 6 |
 | `app/catalog.py` | [app/catalog.py.md](app/catalog.py.md) | 6 |
 | `tests/test_deploy.py` | [tests/test_deploy.py.md](tests/test_deploy.py.md) | 6 |
+| `mobile/` (all files) | [mobile/README.md](mobile/README.md) | 7 |

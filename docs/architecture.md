@@ -1,6 +1,6 @@
 # Touchline+ architecture
 
-_Updated at the end of every phase. Current state: **Phase 6** (deployment)._
+_Updated at the end of every phase. Current state: **Phase 7** (Expo second-screen app). Phase 8 (demo and launch) is Fourat's._
 
 ## System
 
@@ -111,4 +111,14 @@ flowchart LR
     Img --> App[FastAPI app]
     App --> Src[GAME_SOURCE=both<br/>synthetic + StatsBomb]
     App --> Chat[LangGraph agent<br/>Gemini or offline fallback]
+```
+
+## Mobile second screen (Phase 7)
+
+```mermaid
+flowchart LR
+    Phone[Expo app<br/>mobile/] -->|GET /matches| API[Touchline+ server]
+    Phone -->|SSE /matches/id/stream| API
+    API -->|match + session_id, update, momentum_shift| Phone
+    Phone -->|POST /chat question + session_id| API
 ```
