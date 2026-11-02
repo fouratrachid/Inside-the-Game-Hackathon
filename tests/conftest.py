@@ -3,9 +3,18 @@
 import asyncio
 from unittest import mock
 
+import pytest
+
 from app.replay import replay_updates
 from app.sessions import MatchSession
 from app.synthetic import SyntheticSource
+
+
+@pytest.fixture(autouse=True)
+def _offline_settings(monkeypatch):
+    """Tests never write trace logs into the repository or build a real embedder."""
+    monkeypatch.setenv("GAME_TRACE_LOG", "")
+    monkeypatch.setenv("GAME_RAG_EMBEDDER", "hash")
 
 
 async def run_replay(events, match, session, collect=None):
@@ -94,7 +103,10 @@ def final(text: str, ids=(), minute: int = 0) -> AIMessage:
     )
 
 
+def unwrap(content: str):
+    """Tool results are delimited as <tool_result ...> JSON </tool_result> (Phase 4)."""
+    return json.loads(content.split("\n", 1)[1].rsplit("\n", 1)[0])
+
+
 def tool_results(messages, name: str) -> list:
-    return [
-        json.loads(m.content) for m in messages if isinstance(m, ToolMessage) and m.name == name
-    ]
+    return [unwrap(m.content) for m in messages if isinstance(m, ToolMessage) and m.name == name]

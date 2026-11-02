@@ -28,6 +28,13 @@
       "branch": "phase-3-momentum-shifts",
       "tests": 91,
       "new_tests": 6
+    },
+    {
+      "phase": 4,
+      "name": "Production AI",
+      "branch": "phase-4-production-ai",
+      "tests": 114,
+      "new_tests": 23
     }
   ],
   "charts": [
@@ -40,6 +47,27 @@
         "0.03 (default)": 6,
         "0.05": 4,
         "0.08": 3
+      }
+    },
+    {
+      "file": "phase-4-retrieval.png",
+      "title": "Definition retrieval (hash embedder, 7 queries)",
+      "ylabel": "Queries",
+      "values": {
+        "hit@1": 6,
+        "hit@3": 7,
+        "total": 7
+      }
+    },
+    {
+      "file": "phase-4-tests-by-suite.png",
+      "title": "Phase 4 tests by suite",
+      "ylabel": "Tests",
+      "values": {
+        "observability": 4,
+        "rag": 5,
+        "injection": 7,
+        "streaming/cost": 7
       }
     }
   ]

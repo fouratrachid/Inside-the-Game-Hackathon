@@ -36,6 +36,8 @@ flowchart LR
 ## What changed
 New in Phase 2.
 
+**Phase 4:** `ask()` passes the session (the service now tracks usage on it); tool results are unwrapped from `<tool_result>` blocks.
+
 ## Tests
 20 tests.
 

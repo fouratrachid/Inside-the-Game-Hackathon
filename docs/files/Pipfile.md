@@ -19,6 +19,8 @@ Phase 0: added `matplotlib` to `[dev-packages]` so `tools/charts.py` can render 
 
 **Phase 2:** added `langgraph`, `langchain-core`, `langchain-google-genai`, `langchain-ollama`, `langchain-openai`.
 
+**Phase 4:** added `langfuse`, `chromadb`, `fastembed`.
+
 ## Tests
 CI runs `pipenv verify`, which fails if Pipfile and lock disagree.
 

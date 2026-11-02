@@ -23,6 +23,23 @@ class Settings(BaseSettings):
     shift_window_seconds: float = Field(default=300, gt=0)
     shift_hold_seconds: float = Field(default=180, ge=0)
     shift_debounce_seconds: float = Field(default=300, ge=0)
+    # Touchline+ Phase 4: observability, RAG, guardrails, cache and cost control.
+    trace_log: str = "logs/traces.jsonl"  # Empty disables the local JSON-lines trace log.
+    langfuse_public_key: SecretStr = SecretStr("")
+    langfuse_secret_key: SecretStr = SecretStr("")
+    langfuse_host: str = "https://cloud.langfuse.com"
+    rag_enabled: bool = True
+    rag_path: str = "data/chroma"
+    rag_collection: str = "touchline_knowledge"
+    rag_embedder: Literal["fastembed", "gemini", "hash"] = "fastembed"
+    rag_fastembed_model: str = "BAAI/bge-small-en-v1.5"
+    rag_top_k: int = Field(default=3, ge=1, le=10)
+    chat_rate_limit: int = Field(default=10, ge=0)  # Questions per session per window.
+    chat_rate_window_seconds: float = Field(default=60, gt=0)
+    cache_ttl_seconds: float = Field(default=600, ge=0)
+    cache_max_entries: int = Field(default=256, ge=0)
+    session_budget_usd: float = Field(default=0.10, ge=0)  # 0 disables the budget.
+    model_prices: dict[str, tuple[float, float]] = Field(default_factory=dict)
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = "gemini-3.8-flash"
     explanation_provider: Literal["off", "template", "foundry"] = "template"

@@ -1,6 +1,6 @@
 # Touchline+ architecture
 
-_Updated at the end of every phase. Current state: **Phase 3** (explainable momentum shifts)._
+_Updated at the end of every phase. Current state: **Phase 4** (production AI layer)._
 
 ## System
 
@@ -22,6 +22,11 @@ flowchart LR
     Graph <--> Tools[app/agent/tools.py<br/>7 read-only tools]
     Tools --> View[SessionView]
     Graph --> LLM[(Gemini / Foundry / Ollama)]
+    Agent --> Guard[app/guardrails.py<br/>input flags · rate limit · output checks]
+    Agent --> Usage[app/usage.py<br/>cache · cost · budget]
+    Agent --> Trace[app/observability.py<br/>JSONL · Langfuse]
+    Tools --> RAG[app/rag<br/>Chroma + embeddings] --> KN[(knowledge/*.md)]
+    Browser -->|POST /chat/stream| Main
     Main -->|GAME_AGENT=maf| MAF[app/chat.py + chat_workflow.py] --> LLM2[(Gemini / Foundry)]
 ```
 
@@ -62,4 +67,24 @@ sequenceDiagram
     R-->>B: momentum_shift {sequences, chain, narration}
     B->>B: chart marker + timeline note
     B->>B: click → numbered arrows on pitch
+```
+
+## Production request flow (Phase 4)
+
+```mermaid
+sequenceDiagram
+    participant UI as chat.js
+    participant API as /chat/stream
+    participant S as MatchAgent
+    participant G as Graph
+    participant T as Tracer
+    UI->>API: question + session_id
+    API->>S: rate limit
+    S->>T: root trace (session, match, provider)
+    S->>S: input guard → cache → budget
+    S->>G: stream_agent
+    G->>T: spans: generation, tools, validator
+    G-->>UI: token events
+    G-->>S: validated answer + usage
+    S-->>UI: final {citations, sources, trace, cost, session_usage}
 ```

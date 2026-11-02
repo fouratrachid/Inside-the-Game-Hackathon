@@ -243,3 +243,7 @@ Thumbs.db
 !/artifacts/demo/touchline-demo.mp4
 !/artifacts/demo/touchline-opening-slide.jpg
 /.demo-production/
+
+# Touchline+ local runtime data
+/logs/
+/data/chroma/

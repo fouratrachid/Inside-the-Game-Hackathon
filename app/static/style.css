@@ -820,3 +820,8 @@ dialog>div { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24
 .ai-note.clickable { cursor: pointer; border-radius: 6px; }
 .ai-note.clickable:hover, .ai-note.clickable:focus-visible { background: rgba(18, 99, 71, .06); outline: none; }
 .shift-note time { color: #8a4b00; }
+
+/* Touchline+ Phase 4: streamed answers. */
+.chat-streaming::after { content: "▍"; animation: chat-caret 1s steps(1) infinite; color: var(--muted); }
+.chat-error { color: #a21d4c; }
+@keyframes chat-caret { 50% { opacity: 0; } }

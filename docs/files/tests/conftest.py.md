@@ -21,6 +21,8 @@ New in Phase 1.
 
 **Phase 2:** adds `ScriptedModel` (a LangChain `BaseChatModel` that plays back scripted AI turns and records every prompt), `tool_call`, `final` and `tool_results` helpers.
 
+**Phase 4:** autouse fixture disables the trace log and selects the hash embedder; `unwrap()` reads delimited tool results.
+
 ## Tests
 Exercised by every test that imports it.
 

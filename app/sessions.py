@@ -12,6 +12,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 
 from app.analytics import MinuteHistory, PlayerAccumulator
+from app.usage import SessionUsage
 
 RECENT_EVENTS = 60
 SESSION_ID_PATTERN = r"^[A-Za-z0-9_-]{16,64}$"
@@ -93,6 +94,7 @@ class MatchSession:
     players: PlayerAccumulator = field(default_factory=PlayerAccumulator)
     minutes: MinuteHistory = field(default_factory=MinuteHistory)
     shifts: list = field(default_factory=list)
+    usage: SessionUsage = field(default_factory=SessionUsage)
 
     def record(self, event: dict, analytics: dict) -> bool:
         """Record an emitted update. Call only after its frame was yielded. Idempotent."""

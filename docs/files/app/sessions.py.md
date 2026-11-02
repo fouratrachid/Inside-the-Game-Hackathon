@@ -65,6 +65,8 @@ New in Phase 1.
 
 **Phase 3:** `shifts` list, `record_shift(shift)` (idempotent by id), `snapshot()['momentum_shifts']` (last three, without drawing data), `SessionView.shifts`.
 
+**Phase 4:** `MatchSession.usage: SessionUsage`.
+
 ## Tests
 `tests/test_sessions.py`: session announced in the stream; chat context equals the last streamed update; client snapshot ignored; 404/409; TTL and LRU eviction; duplicate ids recorded once; and a **no-future-leakage** test that checks, at every yielded frame, the session holds only events already handed out.
 

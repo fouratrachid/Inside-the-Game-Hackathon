@@ -13,7 +13,10 @@ from app.agent.service import MatchAgent
 from app.chat import ChatQuery, ChatRequest, MatchChat
 from app.config import Settings
 from app.explanations import Audience, ExplanationProvider
-from app.replay import replay
+from app.guardrails import RateLimiter
+from app.observability import build_tracer
+from app.rag.knowledge import build_knowledge
+from app.replay import replay, sse
 from app.sessions import SessionStore
 from app.shifts import ShiftSettings
 from app.source import StatsBombSource
@@ -25,7 +28,13 @@ def create_app() -> FastAPI:
     application.state.source = StatsBombSource()
     application.state.settings = settings
     application.state.chat = MatchChat(settings)
-    application.state.agent = MatchAgent(settings)
+    application.state.tracer = build_tracer(settings)
+    application.state.agent = MatchAgent(
+        settings, tracer=application.state.tracer, knowledge=build_knowledge(settings)
+    )
+    application.state.limiter = RateLimiter(
+        settings.chat_rate_limit, settings.chat_rate_window_seconds
+    )
     application.state.explanations = ExplanationProvider(settings)
     application.state.sessions = SessionStore()
     static = Path(__file__).parent / "static"
@@ -43,16 +52,23 @@ def create_app() -> FastAPI:
     async def overlay():
         return RedirectResponse("/", status_code=308)
 
-    @application.post("/chat", tags=["match intelligence"])
-    async def chat(payload: ChatQuery):
+    def chat_session(payload: ChatQuery):
         session = application.state.sessions.get(payload.session_id)
         if session is None:
             raise HTTPException(404, "Replay session not found or expired. Restart the replay.")
-        snapshot = session.snapshot()
-        if snapshot is None:
+        if session.snapshot() is None:
             raise HTTPException(409, "The replay has not emitted any events yet.")
+        # Applies to questions and automatic timeline notes alike (both call /chat).
+        if not application.state.limiter.allow(session.id):
+            raise HTTPException(429, "Too many questions for this replay. Wait a moment.")
+        return session
+
+    @application.post("/chat", tags=["match intelligence"])
+    async def chat(payload: ChatQuery):
+        session = chat_session(payload)
+        snapshot = session.snapshot()
         if settings.agent == "langgraph":
-            return await application.state.agent.ask(payload.question, payload.mode, session.view())
+            return await application.state.agent.ask(payload.question, payload.mode, session)
         if settings.chat_provider == "ollama":
             raise HTTPException(503, "The original workflow supports Gemini or Foundry only.")
         try:
@@ -63,6 +79,32 @@ def create_app() -> FastAPI:
         # Same trace shape as the LangGraph agent: [{tool, args}].
         tools = answer.get("tools_used") or []
         return {**answer, "tools_used": [{"tool": name, "args": {}} for name in tools]}
+
+    @application.post("/chat/stream", tags=["match intelligence"])
+    async def chat_stream(payload: ChatQuery):
+        """SSE: `token` events with answer text, then `final` (validated answer) or `error`."""
+        if settings.agent != "langgraph":
+            raise HTTPException(400, "Streaming requires GAME_AGENT=langgraph.")
+        session = chat_session(payload)
+
+        async def events():
+            async for kind, data in application.state.agent.stream(
+                payload.question, payload.mode, session
+            ):
+                yield sse(kind, data)
+
+        return StreamingResponse(
+            events(),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+
+    @application.get("/sessions/{session_id}/usage", tags=["match intelligence"])
+    async def usage(session_id: str):
+        session = application.state.sessions.get(session_id)
+        if session is None:
+            raise HTTPException(404, "Replay session not found or expired.")
+        return session.usage.as_dict(settings.session_budget_usd or None)
 
     async def load(awaitable):
         try:

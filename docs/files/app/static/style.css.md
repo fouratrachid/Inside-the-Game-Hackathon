@@ -19,6 +19,8 @@ Added the `.chat-trace` rules only.
 
 **Phase 3:** `.pitch-actions`, `.shift-marker`, `.chain-arrow` (dash animation via `pathLength=1`), `.chain-step`, `.ai-note.clickable`, `.shift-note`, reduced-motion fallback.
 
+**Phase 4:** `.chat-streaming` caret and `.chat-error`.
+
 ## Tests
 Visual only.
 

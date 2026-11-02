@@ -51,6 +51,14 @@ sequenceDiagram
 ## What changed
 New in Phase 2.
 
+**Phase 4:**
+- `AgentContext` (tracer/root span, knowledge base, model label, prices, secrets, input flags).
+- Spans: `agent` (generation: tokens, cost, output), one `tool` span per call (args, size, duration), `answer`, `validator` (guardrail).
+- `usage` state (reducer sums tokens, cost, model calls).
+- `AgentAnswer.cited_sources`; the validator requires sources ⊆ retrieved sources, and at least one when `lookup_definition` was used; it also runs `check_output` (secrets, system prompt, scoreline, future minute).
+- Tool results are wrapped with `wrap_data("tool_result", …)`; the question with `wrap_data("question", …)`; flagged questions add `FLAGGED_REMINDER`.
+- `stream_agent` uses `graph.astream(stream_mode=["messages","values"])`, extracts the JSON `text` field with `TextFieldStreamer`, emits `reset` when a new agent round starts after text was streamed, then `final`.
+
 ## Tests
 `tests/test_agent.py`: question-specific tool choices, 4-round limit, fabricated id → retry → 502, validator feedback lets the model correct itself, future `snapshot_minute` rejected.
 
