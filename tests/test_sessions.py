@@ -39,7 +39,9 @@ def frames(body):
 
 
 @pytest.fixture
-def app():
+def app(monkeypatch):
+    # These Phase 1 tests target the original pipeline; Phase 2 tests cover LangGraph.
+    monkeypatch.setenv("GAME_AGENT", "maf")
     application = create_app()
     application.state.source = ShortSyntheticSource()
     application.state.chat = RecordingChat()

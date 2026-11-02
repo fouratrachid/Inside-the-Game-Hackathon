@@ -8,6 +8,7 @@ Touchline+ changes, phase by phase. Hadi Sotudeh's original [LICENSE](LICENSE) a
 
 - **Phase 0 — Fork setup and credit.** Renamed to Touchline+, added this credit and changes list, recorded the 58-test baseline, and added documentation scaffolding plus a chart generator ([report](docs/phases/phase-0.md)).
 - **Phase 1 — Server-side match sessions.** Every replay stream creates a session announced by `session_id` in the first `match` event; `/chat` takes `{question, mode, session_id}` and the server builds the context from events it has already emitted, so a browser can no longer inject match context ([report](docs/phases/phase-1.md)).
+- **Phase 2 — LangGraph agent.** A LangGraph agent now chooses its own tools (`get_match_stats`, `get_recent_events`, `get_player_stats`, `compare_periods`, `get_shot`, `find_sequence`, `get_momentum`) for up to four rounds; a validator node rejects answers citing events the replay has not emitted or describing a minute past the clock, retrying once. Gemini, Azure Foundry and Ollama are supported; `GAME_AGENT=maf` keeps the original workflow. Answers show a tool trace ([report](docs/phases/phase-2.md)).
 
 The sections below describe the original Touchline unless a change above says otherwise.
 
@@ -71,7 +72,11 @@ Example questions include:
 - **“What does field tilt tell us?”** Explain territorial control in plain language.
 - **“Who is most involved in the passing network?”** Explore the current player-network window.
 
-### Microsoft Agent Framework + Microsoft Foundry
+### Touchline+: LangGraph agent (default)
+
+With `GAME_AGENT=langgraph` (default) questions go to a LangGraph agent in [app/agent/](app/agent/). The model decides which read-only tools to call, sees their results, and returns `{text, cited_event_ids, snapshot_minute}`; a validator node checks the schema, that every cited event was already emitted by the session, and that the minute is not past the replay clock. One retry with the validator's feedback is allowed, then the API returns the sanitized 502. Providers: `GAME_CHAT_PROVIDER=gemini|foundry|ollama` (`GAME_OLLAMA_URL`, `GAME_OLLAMA_MODEL`, default `qwen2.5:7b-instruct`). See the [Phase 2 report](docs/phases/phase-2.md).
+
+### Original: Microsoft Agent Framework + Microsoft Foundry (`GAME_AGENT=maf`)
 
 The hosted app uses **Azure-hosted GPT-4.1 mini through Microsoft Foundry** for match questions and automatic notes. Gemini is also supported for local use. See [Azure configuration](docs/azure-free.md).
 

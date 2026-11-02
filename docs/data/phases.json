@@ -14,6 +14,13 @@
       "branch": "phase-1-sessions",
       "tests": 65,
       "new_tests": 7
+    },
+    {
+      "phase": 2,
+      "name": "Agent",
+      "branch": "phase-2-agent",
+      "tests": 85,
+      "new_tests": 20
     }
   ]
 }

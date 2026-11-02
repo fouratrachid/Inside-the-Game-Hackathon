@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
+from app.agent.service import MatchAgent
 from app.chat import ChatQuery, ChatRequest, MatchChat
 from app.config import Settings
 from app.explanations import Audience, ExplanationProvider
@@ -21,7 +22,9 @@ def create_app() -> FastAPI:
     settings = Settings()
     application = FastAPI(title=settings.app_name, version="0.1.0")
     application.state.source = StatsBombSource()
+    application.state.settings = settings
     application.state.chat = MatchChat(settings)
+    application.state.agent = MatchAgent(settings)
     application.state.explanations = ExplanationProvider(settings)
     application.state.sessions = SessionStore()
     static = Path(__file__).parent / "static"
@@ -47,11 +50,18 @@ def create_app() -> FastAPI:
         snapshot = session.snapshot()
         if snapshot is None:
             raise HTTPException(409, "The replay has not emitted any events yet.")
+        if settings.agent == "langgraph":
+            return await application.state.agent.ask(payload.question, payload.mode, session.view())
+        if settings.chat_provider == "ollama":
+            raise HTTPException(503, "The original workflow supports Gemini or Foundry only.")
         try:
             request = ChatRequest(question=payload.question, mode=payload.mode, snapshot=snapshot)
         except ValidationError:
             raise HTTPException(500, "Could not prepare the match context.") from None
-        return await application.state.chat.ask(request)
+        answer = await application.state.chat.ask(request)
+        # Same trace shape as the LangGraph agent: [{tool, args}].
+        tools = answer.get("tools_used") or []
+        return {**answer, "tools_used": [{"tool": name, "args": {}} for name in tools]}
 
     async def load(awaitable):
         try:

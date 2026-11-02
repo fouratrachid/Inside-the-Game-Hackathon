@@ -6,5 +6,6 @@ _Running summary, updated after every phase._
 | --- | --- | --- | --- |
 | 0 — Setup and credit | `phase-0-setup` | 58 | [phase-0](phases/phase-0.md) |
 | 1 — Sessions | `phase-1-sessions` | 65 | [phase-1](phases/phase-1.md) |
+| 2 — Agent | `phase-2-agent` | 85 | [phase-2](phases/phase-2.md) |
 
 ![Tests per phase](images/tests-per-phase.png)

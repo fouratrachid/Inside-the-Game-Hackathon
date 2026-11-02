@@ -11,7 +11,13 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="GAME_", env_file=".env", extra="ignore")
 
     app_name: str = "Inside the Game"
-    chat_provider: Literal["gemini", "foundry"] = "gemini"
+    # Touchline+: which chat pipeline answers questions (original MAF workflow or LangGraph).
+    agent: Literal["maf", "langgraph"] = "langgraph"
+    chat_provider: Literal["gemini", "foundry", "ollama"] = "gemini"
+    ollama_url: str = "http://127.0.0.1:11434"
+    ollama_model: str = "qwen2.5:7b-instruct"
+    agent_max_tool_rounds: int = Field(default=4, ge=1, le=8)
+    chat_timeout_seconds: float = Field(default=45, gt=0, le=300)
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = "gemini-3.8-flash"
     explanation_provider: Literal["off", "template", "foundry"] = "template"
@@ -24,6 +30,10 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_foundry(self):
+        if self.chat_provider == "ollama":
+            url = urlsplit(self.ollama_url)
+            if url.scheme not in ("http", "https") or not url.hostname:
+                raise ValueError("Ollama URL must be an http(s) URL")
         if self.explanation_provider == "foundry" or self.chat_provider == "foundry":
             endpoint = urlsplit(self.foundry_endpoint)
             if (

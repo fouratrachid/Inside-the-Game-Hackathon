@@ -42,3 +42,59 @@ def synthetic_session(limit=None, collect=None):
         return session, frames
 
     return asyncio.run(run())
+
+
+# Fake LLM for agent tests (no API key, no network) ----------------------------------------
+import itertools  # noqa: E402
+import json  # noqa: E402
+
+from langchain_core.language_models import BaseChatModel  # noqa: E402
+from langchain_core.messages import AIMessage, ToolMessage  # noqa: E402
+from langchain_core.outputs import ChatGeneration, ChatResult  # noqa: E402
+from pydantic import Field  # noqa: E402
+
+_call_ids = itertools.count(1)
+
+
+class ScriptedModel(BaseChatModel):
+    """Plays back AI turns. Each step is an AIMessage or a callable(messages) -> AIMessage."""
+
+    script: list = Field(default_factory=list)
+    calls: list = Field(default_factory=list)
+    bound_tools: list = Field(default_factory=list)
+
+    @property
+    def _llm_type(self) -> str:
+        return "scripted"
+
+    def bind_tools(self, tools, **kwargs):
+        self.bound_tools = [tool.name for tool in tools]
+        return self
+
+    def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+        self.calls.append(list(messages))
+        if not self.script:
+            raise AssertionError("The scripted model ran out of turns")
+        step = self.script.pop(0)
+        message = step(messages) if callable(step) else step
+        return ChatResult(generations=[ChatGeneration(message=message)])
+
+
+def tool_call(*requests) -> AIMessage:
+    """An AI turn requesting tools: tool_call(("get_match_stats", {}), ...)."""
+    return AIMessage(
+        content="",
+        tool_calls=[{"name": n, "args": a, "id": f"c{next(_call_ids)}"} for n, a in requests],
+    )
+
+
+def final(text: str, ids=(), minute: int = 0) -> AIMessage:
+    return AIMessage(
+        content=json.dumps({"text": text, "cited_event_ids": list(ids), "snapshot_minute": minute})
+    )
+
+
+def tool_results(messages, name: str) -> list:
+    return [
+        json.loads(m.content) for m in messages if isinstance(m, ToolMessage) and m.name == name
+    ]

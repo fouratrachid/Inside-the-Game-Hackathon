@@ -29,6 +29,8 @@ Depends on `app/chat.py`, `app/replay.py`, `app/sessions.py`, `app/source.py`, `
 ## What changed
 Before: `/chat` accepted `ChatRequest` with a browser `snapshot`. Phase 1: `ChatQuery` body, session lookup, server-built snapshot; stream endpoint creates a session.
 
+**Phase 2:** `/chat` dispatches on `GAME_AGENT`: `langgraph` → `MatchAgent.ask(question, mode, session.view())`; `maf` → original workflow (Ollama rejected with 503 there), with `tools_used` normalised to `[{tool, args}]`.
+
 ## Tests
 `tests/test_app.py`, `tests/test_sessions.py`.
 

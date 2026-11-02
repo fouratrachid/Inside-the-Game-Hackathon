@@ -9,6 +9,11 @@ uvicorn = "*"
 httpx = "*"
 pydantic-settings = "*"
 agent-framework-core = "<2,>=1"
+langgraph = "*"
+langchain-core = "*"
+langchain-google-genai = "*"
+langchain-ollama = "*"
+langchain-openai = "*"
 
 [dev-packages]
 pytest = "*"

@@ -61,6 +61,8 @@ Used by `app/replay.py` (records), `app/main.py` (store, lookup), `app/chat.py` 
 ## What changed
 New in Phase 1.
 
+**Phase 2:** `record` also appends a compact per-event record to `history` (event, details, end location, shot, xT, momentum, summary) and feeds `PlayerAccumulator` and `MinuteHistory`. `view()` returns a frozen `SessionView` (history tuple, player and minute snapshots, clock, snapshot) that the agent's tools read, so events emitted while the agent is thinking cannot leak into the answer.
+
 ## Tests
 `tests/test_sessions.py`: session announced in the stream; chat context equals the last streamed update; client snapshot ignored; 404/409; TTL and LRU eviction; duplicate ids recorded once; and a **no-future-leakage** test that checks, at every yielded frame, the session holds only events already handed out.
 

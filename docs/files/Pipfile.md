@@ -17,6 +17,8 @@ flowchart LR
 ## What changed
 Phase 0: added `matplotlib` to `[dev-packages]` so `tools/charts.py` can render the PNG charts required in docs. Not installed in production images.
 
+**Phase 2:** added `langgraph`, `langchain-core`, `langchain-google-genai`, `langchain-ollama`, `langchain-openai`.
+
 ## Tests
 CI runs `pipenv verify`, which fails if Pipfile and lock disagree.
 

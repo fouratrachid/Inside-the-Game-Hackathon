@@ -19,6 +19,8 @@ Imported by `tests/test_sessions.py` (and later test modules).
 ## What changed
 New in Phase 1.
 
+**Phase 2:** adds `ScriptedModel` (a LangChain `BaseChatModel` that plays back scripted AI turns and records every prompt), `tool_call`, `final` and `tool_results` helpers.
+
 ## Tests
 Exercised by every test that imports it.
 

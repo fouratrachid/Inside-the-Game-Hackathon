@@ -29,6 +29,8 @@ Depends on `tests/conftest.py`, `app/main.py`, `app/sessions.py`, `app/synthetic
 ## What changed
 New in Phase 1.
 
+**Phase 2:** the fixture sets `GAME_AGENT=maf` because these tests use the fake original `MatchChat`; LangGraph equivalents live in `tests/test_agent.py`.
+
 ## Tests
 7 tests, all passing.
 

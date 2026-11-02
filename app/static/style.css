@@ -681,6 +681,8 @@ dialog>div { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24
 .chat-reply p { margin: 5px 0 10px; white-space: pre-wrap; }
 .chat-asked { font-weight: 650; }
 .chat-evidence { font-size: 11px; color: var(--muted); }
+/* Touchline+: which tools the agent chose for this answer. */
+.chat-trace { font-size: 10.5px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; opacity: .85; }
 .chat-form { flex-shrink: 0; margin: 8px 16px 0; }
 .chat-input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .chat-form>div { display: flex; gap: 6px; }
@@ -734,6 +736,7 @@ dialog>div { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24
 .broadcast-overlay .chat-form button { font-size: 16px; }
 .broadcast-overlay .chat-status,
 .broadcast-overlay .chat-evidence { font-size: 14px; }
+.broadcast-overlay .chat-trace { font-size: 12px; }
 .broadcast-controls summary { font-size: 17px; }
 .broadcast-controls .control-bar label { font-size: 15px; }
 .broadcast-controls select { font-size: 16px; }

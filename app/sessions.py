@@ -11,6 +11,8 @@ from collections import OrderedDict, deque
 from copy import deepcopy
 from dataclasses import dataclass, field
 
+from app.analytics import MinuteHistory, PlayerAccumulator
+
 RECENT_EVENTS = 60
 SESSION_ID_PATTERN = r"^[A-Za-z0-9_-]{16,64}$"
 
@@ -46,6 +48,37 @@ def summarize(event: dict, analytics: dict) -> dict:
     }
 
 
+def compact(event: dict, analytics: dict) -> dict:
+    """Per-event record kept for the whole replay (Phase 2); heavy analytics are not."""
+    momentum = analytics.get("momentum") or {}
+    return {
+        "event": event,
+        "details": analytics.get("event_details") or {},
+        "end_location": analytics.get("end_location"),
+        "shot": analytics.get("shot_added"),
+        "xt": momentum.get("action_value"),
+        "momentum": {k: momentum.get(k) for k in ("home", "away", "net_difference")},
+        "summary": summarize(event, analytics),
+    }
+
+
+@dataclass(frozen=True)
+class SessionView:
+    """Immutable view of a session at one instant, used by the agent's tools."""
+
+    id: str
+    match: dict
+    clock: dict | None
+    latest: dict | None
+    history: tuple
+    players: dict
+    minutes: list
+    snapshot: dict | None
+
+    def event_ids(self) -> set:
+        return {record["event"].get("id") for record in self.history}
+
+
 @dataclass
 class MatchSession:
     match: dict
@@ -55,6 +88,9 @@ class MatchSession:
     events: deque = field(default_factory=lambda: deque(maxlen=RECENT_EVENTS))
     seen: set = field(default_factory=set)
     touched: float = field(default_factory=lambda: time.monotonic())
+    history: list = field(default_factory=list)
+    players: PlayerAccumulator = field(default_factory=PlayerAccumulator)
+    minutes: MinuteHistory = field(default_factory=MinuteHistory)
 
     def record(self, event: dict, analytics: dict) -> bool:
         """Record an emitted update. Call only after its frame was yielded. Idempotent."""
@@ -63,6 +99,10 @@ class MatchSession:
             return False
         self.seen.add(identifier)
         self.events.appendleft(summarize(event, analytics))
+        self.history.append(compact(event, analytics))
+        update = {**analytics, "event": event}
+        self.players.consume(update)
+        self.minutes.consume(update)
         self.latest = analytics
         self.clock = {
             "minute": event.get("minute"),
@@ -92,6 +132,19 @@ class MatchSession:
                 "passing_network": latest.get("passing_network"),
                 "events": list(self.events),
             }
+        )
+
+    def view(self) -> SessionView:
+        """Freeze the session now; later replay events cannot leak into an answer."""
+        return SessionView(
+            id=self.id,
+            match=self.match,
+            clock=dict(self.clock) if self.clock else None,
+            latest=self.latest,
+            history=tuple(self.history),
+            players=self.players.snapshot(),
+            minutes=self.minutes.snapshot(),
+            snapshot=self.snapshot(),
         )
 
 

@@ -41,6 +41,15 @@
     if(!response.ok)throw Error(typeof data.detail==="string"?data.detail:"Could not answer. Try again.");
     return data;
   }
+  // "used: get_player_stats(Cazorla) → find_sequence(…)" — which tools the agent chose.
+  function trace(data){
+    const steps=(data.tools_used||[]).map(step=>{
+      const args=Object.values(step.args||{}).map(value=>String(value)).join(", ");
+      return `${step.tool}(${args.length>28?args.slice(0,27)+"…":args})`;
+    });
+    if(!steps.length)return null;
+    return Object.assign(document.createElement("p"),{className:"chat-trace",textContent:"used: "+steps.join(" → ")});
+  }
   function stamp(snapshot){
     return `${String(snapshot.clock.minute).padStart(2,"0")}:${String(snapshot.clock.second).padStart(2,"0")}`;
   }
@@ -69,6 +78,7 @@
         evidence.textContent="Evidence: "+data.evidence.map(event=>`${event.minute}′ ${event.action}`).join(" · ");
         note.append(evidence);
       }
+      const used=trace(data);if(used)note.append(used);
       timeline.prepend(note);timeline.scrollTop=0;
       lastNoteClock=clock;lastNoteKey=key;
       timelineStatus.textContent="Watching for the next match update.";
@@ -93,9 +103,10 @@
         const evidence=document.createElement("p");evidence.className="chat-evidence";
         evidence.textContent="Evidence: "+data.evidence.map(event=>`${event.minute}′ ${event.action}`).join(" · ");reply.append(evidence);
       }
+      const used=trace(data);if(used)reply.append(used);
       const stamp=`${String(submitted.clock.minute).padStart(2,"0")}:${String(submitted.clock.second).padStart(2,"0")}`;
       const provider=data.provider||"AI";
-      status.textContent=`Agent Framework + ${provider} · ${mode==="simple"?"Casual fan":"Analyst"} · As of ${stamp}`;
+      status.textContent=`${data.orchestrator||"Agent"} + ${provider} · ${mode==="simple"?"Casual fan":"Analyst"} · As of ${stamp}`;
       input.value="";
     }catch(error){if(token===version&&error.name!=="AbortError")status.textContent=error.message;}
     finally{if(token===version){controller=null;send.disabled=false;}}

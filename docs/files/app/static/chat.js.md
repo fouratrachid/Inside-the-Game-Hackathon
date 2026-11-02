@@ -22,6 +22,8 @@ Listens to events from `app.js`; calls `/chat`.
 ## What changed
 Before: sent `snapshot` built from the browser state. Phase 1: sends `session_id` only.
 
+**Phase 2:** `trace(data)` renders `used: tool(args) → tool(args)` under answers and timeline notes; the status line uses `data.orchestrator`.
+
 ## Tests
 Server-side tests in `tests/test_sessions.py` (client snapshot ignored); syntax via `node --check`.
 
