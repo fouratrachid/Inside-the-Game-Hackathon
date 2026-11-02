@@ -1,0 +1,6 @@
+{
+  "baseline_tests": 58,
+  "phases": [
+    {"phase": 0, "name": "Setup", "branch": "phase-0-setup", "tests": 58, "new_tests": 0}
+  ]
+}

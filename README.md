@@ -1,4 +1,14 @@
-# Touchline
+> Built on [Touchline](https://github.com/hadisotudeh/Inside-the-Game-Hackathon) by [Hadi Sotudeh](https://www.linkedin.com/in/hadisotudeh), originally created for the Microsoft × Premier League Inside the Game Developer Hackathon and released under the MIT License. Touchline+ is an independent extension by Fourat Rachid and is not part of that hackathon.
+
+# Touchline+
+
+## Changes
+
+Touchline+ changes, phase by phase. Hadi Sotudeh's original [LICENSE](LICENSE) and copyright notice are unchanged. Each phase has a report in [docs/phases](docs/phases/), every changed file has a page in [docs/files](docs/files/README.md), and the current architecture is in [docs/architecture.md](docs/architecture.md).
+
+- **Phase 0 — Fork setup and credit.** Renamed to Touchline+, added this credit and changes list, recorded the 58-test baseline, and added documentation scaffolding plus a chart generator ([report](docs/phases/phase-0.md)).
+
+The sections below describe the original Touchline unless a change above says otherwise.
 
 [![Python checks](https://github.com/hadisotudeh/Inside-the-Game-Hackathon/actions/workflows/checks.yml/badge.svg)](https://github.com/hadisotudeh/Inside-the-Game-Hackathon/actions/workflows/checks.yml)
 
