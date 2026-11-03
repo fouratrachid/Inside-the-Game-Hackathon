@@ -681,6 +681,8 @@ dialog>div { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24
 .chat-reply p { margin: 5px 0 10px; white-space: pre-wrap; }
 .chat-asked { font-weight: 650; }
 .chat-evidence { font-size: 11px; color: var(--muted); }
+/* Touchline+: which tools the agent chose for this answer. */
+.chat-trace { font-size: 10.5px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; opacity: .85; }
 .chat-form { flex-shrink: 0; margin: 8px 16px 0; }
 .chat-input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .chat-form>div { display: flex; gap: 6px; }
@@ -734,6 +736,7 @@ dialog>div { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24
 .broadcast-overlay .chat-form button { font-size: 16px; }
 .broadcast-overlay .chat-status,
 .broadcast-overlay .chat-evidence { font-size: 14px; }
+.broadcast-overlay .chat-trace { font-size: 12px; }
 .broadcast-controls summary { font-size: 17px; }
 .broadcast-controls .control-bar label { font-size: 15px; }
 .broadcast-controls select { font-size: 16px; }
@@ -802,3 +805,23 @@ dialog>div { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24
 
 #momentumAxis { display: block; position: relative; height: 20px; }
 #momentumAxis span { position: absolute; top: 0; }
+
+/* Touchline+ Phase 3: momentum shifts and chain highlights. */
+.pitch-actions { display: flex; gap: 10px; align-items: center; }
+.shift-marker { cursor: pointer; }
+.shift-marker:hover circle, .shift-marker:focus-visible circle { stroke-width: 3; }
+.chain-arrow { stroke-width: .8; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; animation: chain-draw .6s ease-out forwards; }
+.chain-step { opacity: 0; animation: chain-fade .3s ease-out forwards; }
+.chain-step text { font-size: 3px; font-weight: 700; fill: white; pointer-events: none; }
+.chain-empty { font-size: 4px; fill: var(--muted); }
+@keyframes chain-draw { from { opacity: 1; } to { opacity: 1; stroke-dashoffset: 0; } }
+@keyframes chain-fade { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .chain-arrow, .chain-step { animation: none; stroke-dashoffset: 0; opacity: 1; } }
+.ai-note.clickable { cursor: pointer; border-radius: 6px; }
+.ai-note.clickable:hover, .ai-note.clickable:focus-visible { background: rgba(18, 99, 71, .06); outline: none; }
+.shift-note time { color: #8a4b00; }
+
+/* Touchline+ Phase 4: streamed answers. */
+.chat-streaming::after { content: "▍"; animation: chat-caret 1s steps(1) infinite; color: var(--muted); }
+.chat-error { color: #a21d4c; }
+@keyframes chat-caret { 50% { opacity: 0; } }

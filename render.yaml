@@ -1,0 +1,21 @@
+# Render blueprint for Touchline+ (free web service, Docker). See docs/deploy.md.
+services:
+  - type: web
+    name: touchline-plus
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: GAME_SOURCE
+        value: both
+      - key: GAME_CHAT_PROVIDER
+        value: gemini
+      - key: GAME_GEMINI_API_KEY
+        sync: false  # Set in the Render dashboard; without it chat uses the offline baseline.
+      - key: GAME_SESSION_BUDGET_USD
+        value: "0.05"
+      - key: GAME_CHAT_RATE_LIMIT
+        value: "6"
+      - key: GAME_MAX_SESSIONS
+        value: "50"

@@ -1,0 +1,118 @@
+{
+  "baseline_tests": 58,
+  "phases": [
+    {
+      "phase": 0,
+      "name": "Setup",
+      "branch": "phase-0-setup",
+      "tests": 58,
+      "new_tests": 0
+    },
+    {
+      "phase": 1,
+      "name": "Sessions",
+      "branch": "phase-1-sessions",
+      "tests": 65,
+      "new_tests": 7
+    },
+    {
+      "phase": 2,
+      "name": "Agent",
+      "branch": "phase-2-agent",
+      "tests": 85,
+      "new_tests": 20
+    },
+    {
+      "phase": 3,
+      "name": "Momentum shifts",
+      "branch": "phase-3-momentum-shifts",
+      "tests": 91,
+      "new_tests": 6
+    },
+    {
+      "phase": 4,
+      "name": "Production AI",
+      "branch": "phase-4-production-ai",
+      "tests": 114,
+      "new_tests": 23
+    },
+    {
+      "phase": 5,
+      "name": "Evaluation",
+      "branch": "phase-5-eval",
+      "tests": 120,
+      "new_tests": 6
+    },
+    {
+      "phase": 6,
+      "name": "Deployment",
+      "branch": "phase-6-deploy",
+      "tests": 125,
+      "new_tests": 5
+    },
+    {
+      "phase": 7,
+      "name": "Mobile app",
+      "branch": "phase-7-mobile",
+      "tests": 125,
+      "new_tests": 0
+    }
+  ],
+  "charts": [
+    {
+      "file": "phase-3-shift-thresholds.png",
+      "title": "Momentum shifts detected in the synthetic match",
+      "ylabel": "Shifts (seed 42, 90 min)",
+      "values": {
+        "0.02": 6,
+        "0.03 (default)": 6,
+        "0.05": 4,
+        "0.08": 3
+      }
+    },
+    {
+      "file": "phase-4-retrieval.png",
+      "title": "Definition retrieval (hash embedder, 7 queries)",
+      "ylabel": "Queries",
+      "values": {
+        "hit@1": 6,
+        "hit@3": 7,
+        "total": 7
+      }
+    },
+    {
+      "file": "phase-4-tests-by-suite.png",
+      "title": "Phase 4 tests by suite",
+      "ylabel": "Tests",
+      "values": {
+        "observability": 4,
+        "rag": 5,
+        "injection": 7,
+        "streaming/cost": 7
+      }
+    },
+    {
+      "file": "phase-6-container-latency.png",
+      "title": "Container latency (local Docker, no key)",
+      "ylabel": "Milliseconds",
+      "values": {
+        "/health": 3,
+        "/matches": 77,
+        "chat (offline)": 44,
+        "chat first RAG lookup": 765
+      }
+    },
+    {
+      "file": "phase-7-mobile-tests.png",
+      "title": "Mobile app tests by suite (Jest + RNTL)",
+      "ylabel": "Tests",
+      "values": {
+        "state": 5,
+        "MomentumChart": 3,
+        "ChatPanel": 4,
+        "App flow": 3
+      }
+    }
+  ],
+  "mobile_tests": 15
+}

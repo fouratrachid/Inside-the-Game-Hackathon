@@ -1,0 +1,389 @@
+[
+  {
+    "id": "m1-20-score",
+    "kind": "score",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "What is the score?",
+    "expected": {
+      "score": "1-0"
+    }
+  },
+  {
+    "id": "m1-20-shots",
+    "kind": "shots",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "How many shots does each team have?",
+    "expected": {
+      "home.shots": 5,
+      "away.shots": 2
+    }
+  },
+  {
+    "id": "m1-20-chances",
+    "kind": "chances",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "Who has created the better chances so far?",
+    "expected": {
+      "home.xg": 0.452,
+      "away.xg": 0.099
+    }
+  },
+  {
+    "id": "m1-20-possession",
+    "kind": "possession",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "How is possession split?",
+    "expected": {
+      "home.possession": 48.8,
+      "away.possession": 51.2
+    }
+  },
+  {
+    "id": "m1-20-field_tilt",
+    "kind": "field_tilt",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "What does field tilt say so far?",
+    "expected": {
+      "home.field_tilt": 37.5,
+      "away.field_tilt": 62.5
+    }
+  },
+  {
+    "id": "m1-20-player_passes",
+    "kind": "player_passes",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "How many passes has Northbridge 10 made?",
+    "expected": {
+      "player.passes": 8,
+      "player.completed": 8
+    }
+  },
+  {
+    "id": "m1-20-player_shots",
+    "kind": "player_shots",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "How many shots has Northbridge 11 taken, and for how much xG?",
+    "expected": {
+      "player.shots": 2,
+      "player.xg": 0.292
+    }
+  },
+  {
+    "id": "m1-20-window",
+    "kind": "window",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "Compare the first 15 minutes for both teams.",
+    "expected": {
+      "window.home.shots": 4,
+      "window.away.shots": 2,
+      "window.home.passes": 40
+    }
+  },
+  {
+    "id": "m1-20-momentum",
+    "kind": "momentum",
+    "match_id": 1,
+    "stop_minute": 20,
+    "question": "Who is on top in the last 10 minutes?",
+    "expected": {
+      "momentum.leader": "Southbank United"
+    }
+  },
+  {
+    "id": "m1-44-score",
+    "kind": "score",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "What is the score?",
+    "expected": {
+      "score": "1-0"
+    }
+  },
+  {
+    "id": "m1-44-shots",
+    "kind": "shots",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "How many shots does each team have?",
+    "expected": {
+      "home.shots": 7,
+      "away.shots": 6
+    }
+  },
+  {
+    "id": "m1-44-chances",
+    "kind": "chances",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "Who has created the better chances so far?",
+    "expected": {
+      "home.xg": 0.538,
+      "away.xg": 0.708
+    }
+  },
+  {
+    "id": "m1-44-possession",
+    "kind": "possession",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "How is possession split?",
+    "expected": {
+      "home.possession": 47.4,
+      "away.possession": 52.6
+    }
+  },
+  {
+    "id": "m1-44-field_tilt",
+    "kind": "field_tilt",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "What does field tilt say so far?",
+    "expected": {
+      "home.field_tilt": 42.9,
+      "away.field_tilt": 57.1
+    }
+  },
+  {
+    "id": "m1-44-player_passes",
+    "kind": "player_passes",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "How many passes has Northbridge 10 made?",
+    "expected": {
+      "player.passes": 16,
+      "player.completed": 16
+    }
+  },
+  {
+    "id": "m1-44-player_shots",
+    "kind": "player_shots",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "How many shots has Southbank 6 taken, and for how much xG?",
+    "expected": {
+      "player.shots": 3,
+      "player.xg": 0.325
+    }
+  },
+  {
+    "id": "m1-44-window",
+    "kind": "window",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "Compare the first 15 minutes for both teams.",
+    "expected": {
+      "window.home.shots": 4,
+      "window.away.shots": 2,
+      "window.home.passes": 40
+    }
+  },
+  {
+    "id": "m1-44-momentum",
+    "kind": "momentum",
+    "match_id": 1,
+    "stop_minute": 44,
+    "question": "Who is on top in the last 10 minutes?",
+    "expected": {
+      "momentum.leader": "Northbridge FC"
+    }
+  },
+  {
+    "id": "m1-70-score",
+    "kind": "score",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "What is the score?",
+    "expected": {
+      "score": "1-1"
+    }
+  },
+  {
+    "id": "m1-70-shots",
+    "kind": "shots",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "How many shots does each team have?",
+    "expected": {
+      "home.shots": 7,
+      "away.shots": 10
+    }
+  },
+  {
+    "id": "m1-70-chances",
+    "kind": "chances",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "Who has created the better chances so far?",
+    "expected": {
+      "home.xg": 0.538,
+      "away.xg": 1.373
+    }
+  },
+  {
+    "id": "m1-70-possession",
+    "kind": "possession",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "How is possession split?",
+    "expected": {
+      "home.possession": 43.5,
+      "away.possession": 56.5
+    }
+  },
+  {
+    "id": "m1-70-field_tilt",
+    "kind": "field_tilt",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "What does field tilt say so far?",
+    "expected": {
+      "home.field_tilt": 38.0,
+      "away.field_tilt": 62.0
+    }
+  },
+  {
+    "id": "m1-70-player_passes",
+    "kind": "player_passes",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "How many passes has Southbank 7 made?",
+    "expected": {
+      "player.passes": 26,
+      "player.completed": 23
+    }
+  },
+  {
+    "id": "m1-70-player_shots",
+    "kind": "player_shots",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "How many shots has Southbank 6 taken, and for how much xG?",
+    "expected": {
+      "player.shots": 3,
+      "player.xg": 0.325
+    }
+  },
+  {
+    "id": "m1-70-window",
+    "kind": "window",
+    "match_id": 1,
+    "stop_minute": 70,
+    "question": "Compare the first 15 minutes for both teams.",
+    "expected": {
+      "window.home.shots": 4,
+      "window.away.shots": 2,
+      "window.home.passes": 40
+    }
+  },
+  {
+    "id": "m1-89-score",
+    "kind": "score",
+    "match_id": 1,
+    "stop_minute": 89,
+    "question": "What is the score?",
+    "expected": {
+      "score": "1-1"
+    }
+  },
+  {
+    "id": "m1-89-shots",
+    "kind": "shots",
+    "match_id": 1,
+    "stop_minute": 89,
+    "question": "How many shots does each team have?",
+    "expected": {
+      "home.shots": 13,
+      "away.shots": 11
+    }
+  },
+  {
+    "id": "m1-89-chances",
+    "kind": "chances",
+    "match_id": 1,
+    "stop_minute": 89,
+    "question": "Who has created the better chances so far?",
+    "expected": {
+      "home.xg": 0.929,
+      "away.xg": 1.453
+    }
+  },
+  {
+    "id": "m1-89-possession",
+    "kind": "possession",
+    "match_id": 1,
+    "stop_minute": 89,
+    "question": "How is possession split?",
+    "expected": {
+      "home.possession": 43.9,
+      "away.possession": 56.1
+    }
+  },
+  {
+    "id": "def-1",
+    "kind": "definition",
+    "match_id": 1,
+    "stop_minute": 30,
+    "question": "What is field tilt?",
+    "expected": {
+      "source": "knowledge/field-tilt.md"
+    }
+  },
+  {
+    "id": "def-2",
+    "kind": "definition",
+    "match_id": 1,
+    "stop_minute": 30,
+    "question": "What does xT mean?",
+    "expected": {
+      "source": "knowledge/xt.md"
+    }
+  },
+  {
+    "id": "def-3",
+    "kind": "definition",
+    "match_id": 1,
+    "stop_minute": 30,
+    "question": "What is xG?",
+    "expected": {
+      "source": "knowledge/xg.md"
+    }
+  },
+  {
+    "id": "def-4",
+    "kind": "definition",
+    "match_id": 1,
+    "stop_minute": 30,
+    "question": "How is possession estimated?",
+    "expected": {
+      "source": "knowledge/possession.md"
+    }
+  },
+  {
+    "id": "def-5",
+    "kind": "definition",
+    "match_id": 1,
+    "stop_minute": 30,
+    "question": "What is the momentum proxy?",
+    "expected": {
+      "source": "knowledge/momentum.md"
+    }
+  },
+  {
+    "id": "def-6",
+    "kind": "definition",
+    "match_id": 1,
+    "stop_minute": 30,
+    "question": "What does a passing network mean?",
+    "expected": {
+      "source": "knowledge/passing-networks.md"
+    }
+  }
+]

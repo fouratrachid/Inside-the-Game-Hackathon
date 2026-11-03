@@ -1,4 +1,21 @@
-# Touchline
+> Built on [Touchline](https://github.com/hadisotudeh/Inside-the-Game-Hackathon) by [Hadi Sotudeh](https://www.linkedin.com/in/hadisotudeh), originally created for the Microsoft × Premier League Inside the Game Developer Hackathon and released under the MIT License. Touchline+ is an independent extension by Fourat Rachid and is not part of that hackathon.
+
+# Touchline+
+
+## Changes
+
+Touchline+ changes, phase by phase. Hadi Sotudeh's original [LICENSE](LICENSE) and copyright notice are unchanged. Each phase has a report in [docs/phases](docs/phases/), every changed file has a page in [docs/files](docs/files/README.md), and the current architecture is in [docs/architecture.md](docs/architecture.md).
+
+- **Phase 0 — Fork setup and credit.** Renamed to Touchline+, added this credit and changes list, recorded the 58-test baseline, and added documentation scaffolding plus a chart generator ([report](docs/phases/phase-0.md)).
+- **Phase 1 — Server-side match sessions.** Every replay stream creates a session announced by `session_id` in the first `match` event; `/chat` takes `{question, mode, session_id}` and the server builds the context from events it has already emitted, so a browser can no longer inject match context ([report](docs/phases/phase-1.md)).
+- **Phase 2 — LangGraph agent.** A LangGraph agent now chooses its own tools (`get_match_stats`, `get_recent_events`, `get_player_stats`, `compare_periods`, `get_shot`, `find_sequence`, `get_momentum`) for up to four rounds; a validator node rejects answers citing events the replay has not emitted or describing a minute past the clock, retrying once. Gemini, Azure Foundry and Ollama are supported; `GAME_AGENT=maf` keeps the original workflow. Answers show a tool trace ([report](docs/phases/phase-2.md)).
+- **Phase 3 — Explainable momentum shifts.** The server detects when the other team takes over attacking threat (rolling xT added, gap ≥ 0.03 held for 3 minutes, shifts ≥ 5 minutes apart), explains it with the top xT actions grouped into possession sequences, and streams a `momentum_shift` event. Shifts appear as arrows on the momentum chart and as timeline notes; clicking a note or marker lights up the chain of actions on the pitch with numbered, animated arrows ([report](docs/phases/phase-3.md)).
+- **Phase 4 — Production AI layer.** One trace per question with spans for every node and tool call (local `logs/traces.jsonl`, optional Langfuse); RAG over football definitions (`knowledge/`, Chroma, `lookup_definition` tool with cited sources); guardrails against prompt injection, spoilers and secret leaks; `/chat/stream` token streaming, an answer cache, per-session token/cost accounting (`/sessions/{id}/usage`) and a budget ([report](docs/phases/phase-4.md), [observability](docs/observability.md), [security](docs/security.md)).
+- **Phase 5 — Evaluation harness.** `python -m eval.run` replays the match to each question's stop minute (no sleeping), asks every configured pipeline (original MAF vs LangGraph; offline baseline, Gemini, Foundry, Ollama when available), and reports factual accuracy, citation validity, leakage, latency and tool calls, plus an LLM-as-judge score with a human-grading CSV and judge–human agreement (Cohen's kappa). Results: [eval/results.md](eval/results.md) ([report](docs/phases/phase-5.md)).
+- **Phase 6 — Deployment.** Production `Dockerfile` (non-root, `$PORT`, health check, definitions index built in), Render blueprint, Fly.io and Hugging Face Spaces notes, `GAME_SOURCE=both` so the synthetic match always works, an offline fallback so the public demo answers without a key, server-side timeline-note cooldowns, and CI that builds the image and checks `/health` ([deploy guide](docs/deploy.md), [report](docs/phases/phase-6.md)).
+- **Phase 7 — Expo second-screen app (stretch).** `mobile/` is a TypeScript Expo app: pick a match, follow score, xG and the momentum chart over SSE (`react-native-sse`), read momentum-shift notes and ask questions with the replay's `session_id`. Jest + React Native Testing Library tests and `tsc --noEmit` run in CI ([mobile README](mobile/README.md), [report](docs/phases/phase-7.md)).
+
+The sections below describe the original Touchline unless a change above says otherwise.
 
 [![Python checks](https://github.com/hadisotudeh/Inside-the-Game-Hackathon/actions/workflows/checks.yml/badge.svg)](https://github.com/hadisotudeh/Inside-the-Game-Hackathon/actions/workflows/checks.yml)
 
@@ -60,7 +77,11 @@ Example questions include:
 - **“What does field tilt tell us?”** Explain territorial control in plain language.
 - **“Who is most involved in the passing network?”** Explore the current player-network window.
 
-### Microsoft Agent Framework + Microsoft Foundry
+### Touchline+: LangGraph agent (default)
+
+With `GAME_AGENT=langgraph` (default) questions go to a LangGraph agent in [app/agent/](app/agent/). The model decides which read-only tools to call, sees their results, and returns `{text, cited_event_ids, snapshot_minute}`; a validator node checks the schema, that every cited event was already emitted by the session, and that the minute is not past the replay clock. One retry with the validator's feedback is allowed, then the API returns the sanitized 502. Providers: `GAME_CHAT_PROVIDER=gemini|foundry|ollama` (`GAME_OLLAMA_URL`, `GAME_OLLAMA_MODEL`, default `qwen2.5:7b-instruct`). See the [Phase 2 report](docs/phases/phase-2.md).
+
+### Original: Microsoft Agent Framework + Microsoft Foundry (`GAME_AGENT=maf`)
 
 The hosted app uses **Azure-hosted GPT-4.1 mini through Microsoft Foundry** for match questions and automatic notes. Gemini is also supported for local use. See [Azure configuration](docs/azure-free.md).
 
@@ -86,9 +107,9 @@ flowchart LR
 
 ### Grounding and failure behavior
 
-Each question captures the current score, match totals, passing networks and at most **60 recent events**. Future events and final-result fields are excluded from the supplied snapshot. Player summaries describe the current passing-network window, which resets after substitutions or sending-offs; they are not full-match player totals.
+Each question uses the server session's current score, match totals, passing networks and at most **60 recent events**. Future events and final-result fields are excluded from the supplied snapshot. Player summaries describe the current passing-network window, which resets after substitutions or sending-offs; they are not full-match player totals.
 
-These controls improve traceability, but do not prove every sentence is correct. Aggregate comparisons may have no individual event citations. The prototype currently trusts the viewing client's snapshot; public deployment needs authoritative server-side match sessions.
+These controls improve traceability, but do not prove every sentence is correct. Aggregate comparisons may have no individual event citations. **Touchline+ (Phase 1):** the server no longer trusts a browser snapshot. Each replay stream creates a server-side match session, and `/chat` builds its context only from events that session has already emitted to the viewer.
 
 If the model provider fails, the panel displays an error. Replay and analytics continue independently.
 
@@ -208,7 +229,7 @@ A successful real response exits with code 0 and reports `provider=microsoft_fou
 | --- | --- |
 | `GET /matches` | Available StatsBomb Premier League 2015/16 fixtures, omitting final scores. |
 | `GET /matches/{match_id}/stream` | SSE replay: `match`, incremental `update`, optional `insight`, then `complete`. |
-| `POST /chat` | A question, `simple`/`analyst` mode and bounded replay snapshot; returns an answer or explicit provider error. |
+| `POST /chat` | A question, `simple`/`analyst` mode and the `session_id` announced in the stream's first `match` event (Touchline+); the server builds the context. Unknown or expired sessions return 404; sessions with no emitted events return 409. |
 | `GET /health` | Application health. |
 
 ```bash

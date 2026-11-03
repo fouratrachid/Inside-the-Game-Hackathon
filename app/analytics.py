@@ -210,3 +210,143 @@ class MatchAnalytics:
         x, y = location[:2]
         # Both teams' raw StatsBomb coordinates face +x, including after halftime.
         stats["final_third_passes"] += 80 <= x <= 120 and 0 <= y <= 80
+
+
+# Touchline+ accumulators -------------------------------------------------------------------
+# These consume *emitted* update payloads (the dicts the replay yields), not raw events, so a
+# MatchSession can feed them after each frame is sent and they can never see future events.
+
+GOAL_CENTRE = (120.0, 40.0)
+TOUCH_TYPES = {
+    "Pass",
+    "Carry",
+    "Shot",
+    "Dribble",
+    "Ball Receipt*",
+    "Ball Recovery",
+    "Clearance",
+    "Interception",
+    "Miscontrol",
+    "Dispossessed",
+    "Block",
+}
+
+
+def _distance_to_goal(location) -> float | None:
+    if not isinstance(location, (list, tuple)) or len(location) < 2:
+        return None
+    if not all(isinstance(v, (int, float)) and isfinite(v) for v in location[:2]):
+        return None
+    return ((GOAL_CENTRE[0] - location[0]) ** 2 + (GOAL_CENTRE[1] - location[1]) ** 2) ** 0.5
+
+
+def is_progressive(start, end) -> bool:
+    """A completed pass that moves the ball at least 25% closer to the goal centre."""
+    before, after = _distance_to_goal(start), _distance_to_goal(end)
+    return before is not None and after is not None and before > 0 and after <= 0.75 * before
+
+
+def _update_parts(update: dict):
+    event = update["event"]
+    kind = (event.get("type") or {}).get("name")
+    team = (event.get("team") or {}).get("id")
+    details = update.get("event_details") or {}
+    completed = kind == "Pass" and not (details.get("pass") or {}).get("outcome")
+    shot = update.get("shot_added") if kind == "Shot" else None
+    xt = (update.get("momentum") or {}).get("action_value")
+    return event, kind, team, completed, shot, xt
+
+
+class PlayerAccumulator:
+    """Per-player match-to-date totals keyed by player id."""
+
+    FIELDS = (
+        "passes",
+        "completed_passes",
+        "progressive_passes",
+        "shots",
+        "goals",
+        "xg",
+        "xt_added",
+        "touches",
+    )
+
+    def __init__(self):
+        self.players: dict = {}
+
+    def consume(self, update: dict) -> None:
+        event, kind, team, completed, shot, xt = _update_parts(update)
+        player = event.get("player") or {}
+        key = player.get("id") or player.get("name")
+        if key is None or event.get("period") == 5:
+            return
+        stats = self.players.setdefault(
+            key,
+            {
+                "id": player.get("id"),
+                "name": player.get("name"),
+                "team_id": team,
+                "team": (event.get("team") or {}).get("name"),
+                **{field: 0 for field in self.FIELDS},
+            },
+        )
+        stats["touches"] += kind in TOUCH_TYPES
+        if kind == "Pass":
+            stats["passes"] += 1
+            stats["completed_passes"] += completed
+            stats["progressive_passes"] += completed and is_progressive(
+                event.get("location"), update.get("end_location")
+            )
+        if shot:
+            stats["shots"] += 1
+            stats["goals"] += shot.get("outcome") == "Goal"
+            stats["xg"] = round(stats["xg"] + (shot.get("xg") or 0), 4)
+        if xt is not None:
+            stats["xt_added"] = round(stats["xt_added"] + xt, 4)
+
+    def snapshot(self) -> dict:
+        return {key: dict(value) for key, value in self.players.items()}
+
+
+class MinuteHistory:
+    """Per-minute team totals (shots, xG, xT, passes) so time windows can be compared."""
+
+    FIELDS = ("shots", "xg", "xt", "passes", "completed_passes")
+
+    def __init__(self):
+        self.rows: dict[tuple[int, int, object], dict] = {}
+
+    def consume(self, update: dict) -> None:
+        event, kind, team, completed, shot, xt = _update_parts(update)
+        if team is None or event.get("period") == 5:
+            return
+        key = (event.get("period"), event.get("minute"), team)
+        row = self.rows.setdefault(key, {field: 0 for field in self.FIELDS})
+        row["passes"] += kind == "Pass"
+        row["completed_passes"] += completed
+        if shot:
+            row["shots"] += 1
+            row["xg"] = round(row["xg"] + (shot.get("xg") or 0), 4)
+        if xt is not None:
+            row["xt"] = round(row["xt"] + xt, 4)
+
+    def snapshot(self) -> list[dict]:
+        return [
+            {"period": period, "minute": minute, "team_id": team, **row}
+            for (period, minute, team), row in sorted(
+                self.rows.items(), key=lambda item: (item[0][0], item[0][1], str(item[0][2]))
+            )
+        ]
+
+
+def window_totals(rows: list[dict], start_min: int, end_min: int) -> dict:
+    """Sum minute rows per team inside [start_min, end_min) and outside it."""
+    result: dict = {"inside": {}, "outside": {}}
+    for row in rows:
+        side = "inside" if start_min <= row["minute"] < end_min else "outside"
+        totals = result[side].setdefault(
+            str(row["team_id"]), {field: 0 for field in MinuteHistory.FIELDS}
+        )
+        for field in MinuteHistory.FIELDS:
+            totals[field] = round(totals[field] + row[field], 4)
+    return result

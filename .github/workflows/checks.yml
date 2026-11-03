@@ -21,3 +21,39 @@ jobs:
       - run: pipenv run lint
       - run: pipenv run format --check
       - run: pipenv run test
+      # Touchline+ Phase 5: evaluation harness subset with the offline (rule-based) model.
+      - run: pipenv run python -m eval.run --subset ci --configs langgraph/offline --out "$RUNNER_TEMP/eval" --no-human-export
+        env:
+          GAME_RAG_EMBEDDER: hash
+
+  # Touchline+ Phase 6: the production image must build and answer /health.
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t touchline-plus .
+      - run: |
+          docker run -d --name touchline -p 8000:8000 touchline-plus
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/health && exit 0
+            sleep 2
+          done
+          docker logs touchline
+          exit 1
+
+  # Touchline+ Phase 7: the Expo second-screen app type-checks and its tests pass.
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx jest --ci
