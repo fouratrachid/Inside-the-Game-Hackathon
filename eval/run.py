@@ -29,6 +29,7 @@ from app.rag.embeddings import build_embedder
 from app.rag.ingest import ingest
 from app.rag.knowledge import KnowledgeBase
 from app.rag.store import ChromaStore
+from app.usage import DEFAULT_PRICES, cost_usd
 from eval.replay import replay_to, source_for
 
 HERE = Path(__file__).resolve().parent
@@ -110,7 +111,7 @@ class HeuristicJudge:
 
     async def grade(self, item, answer, metrics) -> tuple[int, str]:
         if answer.get("error"):
-            return 1, f"No answer: {answer['error']}"
+            return None, f"Not judged (no answer): {answer['error']}"
         quality = 0.6 * metrics["fact_accuracy"] + 0.2 * metrics["citation_ok"]
         quality += 0.2 * (0 if metrics["leaks"] else 1)
         score = max(1, min(5, 1 + round(4 * quality)))
@@ -128,7 +129,7 @@ class LLMJudge:
 
     async def grade(self, item, answer, metrics) -> tuple[int | None, str]:
         if answer.get("error"):
-            return 1, f"No answer: {answer['error']}"
+            return None, f"Not judged (no answer): {answer['error']}"
         prompt = (
             f"{self.rubric}\n\nQuestion (replay stopped at minute {item['stop_minute']}): "
             f"{item['question']}\nExpected facts: {json.dumps(item['expected'])}\n"
@@ -145,8 +146,15 @@ class LLMJudge:
             return None, f"Judge failed: {type(error).__name__}"
 
 
-def pick_judge(config: Config, configs: list[Config], base: Settings):
-    """Prefer a different provider from the one being graded; never the offline baseline."""
+def pick_judge(config: Config, configs: list[Config], base: Settings, judge_model=None):
+    """Prefer a different provider from the one being graded; never the offline baseline.
+
+    With only one provider available, `judge_model` lets a different model of that provider
+    judge (e.g. grade gemini-3.8-flash answers with gemini-3.5-flash).
+    """
+    if judge_model and config.provider == "gemini" and base.gemini_api_key.get_secret_value():
+        settings = base.model_copy(update={"chat_provider": "gemini", "gemini_model": judge_model})
+        return LLMJudge(build_model(settings), f"gemini judge ({judge_model})")
     candidates = [c for c in configs if c.available and c.provider != "offline"]
     other = [c for c in candidates if c.provider != config.provider] or candidates
     if not other:
@@ -163,26 +171,76 @@ def knowledge(base: Settings, folder: Path):
     return KnowledgeBase(store, embedder, base.rag_top_k)
 
 
-async def ask(config: Config, base: Settings, session, item, kb) -> dict:
-    settings = base.model_copy(
-        update={"chat_provider": config.provider, "agent": config.agent, "trace_log": ""}
-    )
+class MeteredMatchChat(MatchChat):
+    """The original workflow, unchanged, but recording the token usage Gemini reports."""
+
+    def __init__(self, settings, usage: list):
+        super().__init__(settings)
+        self.usage = usage
+
+    async def _generate(self, payload, key):
+        response = await super()._generate(payload, key)
+        try:
+            data = response.json()
+        except ValueError:
+            return response
+        if isinstance(data, dict) and isinstance(data.get("usage"), dict):
+            self.usage.append(data["usage"])  # Interactions API usage block.
+        return response
+
+
+RETRYABLE = ("429", "503", "502", "504")
+
+
+async def ask_once(config: Config, settings: Settings, session, item, kb) -> dict:
     started = time.perf_counter()
     try:
         if config.agent == "langgraph":
             agent = MatchAgent(settings, knowledge=kb)
             answer = await agent.ask(item["question"], "analyst", session)
         else:
+            usage: list = []
             request = ChatRequest(
                 question=item["question"], mode="analyst", snapshot=session.snapshot()
             )
-            answer = await MatchChat(settings).ask(request)
+            answer = await MeteredMatchChat(settings, usage).ask(request)
             answer["tools_used"] = [{"tool": t, "args": {}} for t in answer.get("tools_used", [])]
             answer["cited_event_ids"] = answer.get("evidence_event_ids", [])
+            input_tokens = sum(u.get("total_input_tokens", 0) for u in usage)
+            # Thinking tokens are billed as output.
+            output_tokens = sum(
+                u.get("total_output_tokens", 0) + u.get("total_thought_tokens", 0) for u in usage
+            )
+            answer["usage"] = {
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "model_calls": len(usage),
+            }
     except HTTPException as error:
         answer = {"error": f"{error.status_code}: {error.detail}"}
     answer["latency_s"] = round(time.perf_counter() - started, 4)
     return answer
+
+
+async def ask(config, base, session, item, kb, retries: int = 0, backoff: float = 20) -> dict:
+    """Ask once; on quota/overload errors wait and retry. Latency is the final attempt's."""
+    settings = base.model_copy(
+        update={
+            "chat_provider": config.provider,
+            "agent": config.agent,
+            "trace_log": "",
+            "session_budget_usd": 0,  # Evaluation must not be cut off by the per-replay budget.
+        }
+    )
+    attempts = 0
+    while True:
+        answer = await ask_once(config, settings, session, item, kb)
+        attempts += 1
+        error = answer.get("error") or ""
+        if not error.startswith(RETRYABLE) or attempts > retries:
+            answer["attempts"] = attempts
+            return answer
+        await asyncio.sleep(backoff * attempts)
 
 
 def percentile(values: list[float], q: float) -> float | None:
@@ -193,7 +251,17 @@ def percentile(values: list[float], q: float) -> float | None:
     return round(ordered[index], 4)
 
 
-async def run(items: list[dict], configs: list[Config], base: Settings, kb) -> dict:
+async def run(
+    items: list[dict],
+    configs: list[Config],
+    base: Settings,
+    kb,
+    *,
+    judge_model: str | None = None,
+    pause: float = 0,
+    retries: int = 0,
+) -> dict:
+    prices = {**DEFAULT_PRICES, **base.model_prices}
     sessions = {}
     rows = []
     for item in items:
@@ -201,11 +269,18 @@ async def run(items: list[dict], configs: list[Config], base: Settings, kb) -> d
         if key not in sessions:
             sessions[key] = await replay_to(source_for(key[0]), *key)
     for config in [c for c in configs if c.available]:
-        judge = pick_judge(config, configs, base)
-        for item in items:
+        judge = pick_judge(config, configs, base, judge_model)
+        for index, item in enumerate(items):
+            if pause and index:
+                await asyncio.sleep(pause)  # Stay under free-tier requests-per-minute limits.
             session = sessions[(item["match_id"], item["stop_minute"])]
             view = session.view()
-            answer = await ask(config, base, session, item, kb)
+            answer = await ask(config, base, session, item, kb, retries)
+            usage = answer.get("usage") or {}
+            model = base.gemini_model if config.provider == "gemini" else config.provider
+            cost = cost_usd(
+                model, usage.get("input_tokens", 0), usage.get("output_tokens", 0), prices
+            )
             text = answer.get("text", "")
             if item["kind"] == "definition":
                 matched = int(item["expected"]["source"] in answer.get("cited_sources", []))
@@ -242,6 +317,11 @@ async def run(items: list[dict], configs: list[Config], base: Settings, kb) -> d
                     "cited_sources": answer.get("cited_sources", []),
                     "tools_used": answer.get("tools_used", []),
                     "latency_s": answer["latency_s"],
+                    "attempts": answer.get("attempts", 1),
+                    "input_tokens": usage.get("input_tokens", 0),
+                    "output_tokens": usage.get("output_tokens", 0),
+                    "model_calls": usage.get("model_calls", 0),
+                    "cost_usd": cost,
                     "judge": judge.name,
                     "judge_score": judge_score,
                     "judge_justification": justification,
@@ -272,7 +352,8 @@ def summarize(rows: list[dict], configs: list[Config]) -> list[dict]:
             summary.append({"config": config.name, "skipped": config.reason})
             continue
         cited = sum(r["cited"] for r in mine)
-        latencies = [r["latency_s"] for r in mine]
+        answered = [r for r in mine if not r["error"]]
+        latencies = [r["latency_s"] for r in answered]  # Failed calls would distort latency.
         judged = [r["judge_score"] for r in mine if r["judge_score"] is not None]
         summary.append(
             {
@@ -280,13 +361,25 @@ def summarize(rows: list[dict], configs: list[Config]) -> list[dict]:
                 "questions": len(mine),
                 "errors": sum(bool(r["error"]) for r in mine),
                 "factual_accuracy": round(statistics.mean(r["fact_accuracy"] for r in mine), 4),
+                "factual_accuracy_answered": round(
+                    statistics.mean(r["fact_accuracy"] for r in answered), 4
+                )
+                if answered
+                else None,
                 "citation_validity": round(sum(r["cited_valid"] for r in mine) / cited, 4)
                 if cited
                 else None,
                 "leakage": sum(bool(r["leaks"]) for r in mine),
                 "latency_p50_s": percentile(latencies, 0.5),
                 "latency_p95_s": percentile(latencies, 0.95),
-                "avg_tool_calls": round(statistics.mean(len(r["tools_used"]) for r in mine), 3),
+                "avg_tool_calls": round(statistics.mean(len(r["tools_used"]) for r in answered), 3)
+                if answered
+                else 0,
+                "model_calls": sum(r.get("model_calls", 0) for r in mine),
+                "input_tokens": sum(r.get("input_tokens", 0) for r in mine),
+                "output_tokens": sum(r.get("output_tokens", 0) for r in mine),
+                "cost_usd": round(sum(r.get("cost_usd", 0) for r in mine), 6),
+                "retried": sum(r.get("attempts", 1) > 1 for r in mine),
                 "judge": mine[0]["judge"] if mine else None,
                 "judge_avg": round(statistics.mean(judged), 3) if judged else None,
             }
@@ -298,19 +391,28 @@ def write_outputs(result: dict, out: Path, human_csv: Path | None) -> None:
     out.mkdir(parents=True, exist_ok=True)
     (out / "results.json").write_text(json.dumps(result, indent=2) + "\n")
     lines = [
-        "| Configuration | Questions | Factual accuracy | Citation validity | Leakage | "
-        "Latency p50 / p95 (s) | Avg tool calls | Judge (1–5) |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Configuration | Answered | Factual accuracy (all / answered) | Citation validity | "
+        "Leakage | Latency p50 / p95 (s) | Avg tool calls | Tokens in / out | Cost (USD) | "
+        "Judge (1–5) |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for s in result["summary"]:
         if "skipped" in s:
-            lines.append(f"| {s['config']} | skipped: {s['skipped']} | | | | | | |")
+            lines.append(f"| {s['config']} | skipped: {s['skipped']} | | | | | | | | |")
             continue
         validity = "n/a" if s["citation_validity"] is None else f"{s['citation_validity']:.0%}"
+        answered = s["questions"] - s["errors"]
+        on_answered = (
+            "n/a"
+            if s.get("factual_accuracy_answered") is None
+            else f"{s['factual_accuracy_answered']:.0%}"
+        )
         lines.append(
-            f"| {s['config']} | {s['questions']} | {s['factual_accuracy']:.0%} | {validity} | "
-            f"{s['leakage']} | {s['latency_p50_s']} / {s['latency_p95_s']} | "
-            f"{s['avg_tool_calls']} | {s['judge_avg']} ({s['judge']}) |"
+            f"| {s['config']} | {answered}/{s['questions']} | {s['factual_accuracy']:.0%} / "
+            f"{on_answered} | {validity} | {s['leakage']} | "
+            f"{s['latency_p50_s']} / {s['latency_p95_s']} | {s['avg_tool_calls']} | "
+            f"{s.get('input_tokens', 0):,} / {s.get('output_tokens', 0):,} | "
+            f"{s.get('cost_usd', 0):.4f} | {s['judge_avg']} ({s['judge']}) |"
         )
     if result.get("retrieval"):
         r = result["retrieval"]
@@ -407,8 +509,14 @@ def main(argv=None) -> dict:
     parser.add_argument("--configs", help="Comma-separated names, e.g. langgraph/offline")
     parser.add_argument("--out", type=Path, default=HERE)
     parser.add_argument("--no-human-export", action="store_true")
+    parser.add_argument("--model", help="Gemini model to evaluate (default: GAME_GEMINI_MODEL)")
+    parser.add_argument("--judge-model", help="Different Gemini model to use as the judge")
+    parser.add_argument("--pause", type=float, default=0, help="Seconds between questions")
+    parser.add_argument("--retries", type=int, default=0, help="Retries on 429/5xx errors")
     args = parser.parse_args(argv)
     base = Settings(trace_log="")
+    if args.model:
+        base = base.model_copy(update={"gemini_model": args.model})
     items = json.loads((HERE / "questions.json").read_text())
     if args.subset == "ci":
         items = [i for i in items if i["id"] in CI_SUBSET]
@@ -420,7 +528,22 @@ def main(argv=None) -> dict:
                 config.available, config.reason = False, "not selected"
     with tempfile.TemporaryDirectory() as folder:
         kb = knowledge(base, Path(folder)) if base.rag_enabled else None
-        result = asyncio.run(run(items, configs, base, kb))
+        result = asyncio.run(
+            run(
+                items,
+                configs,
+                base,
+                kb,
+                judge_model=args.judge_model,
+                pause=args.pause,
+                retries=args.retries,
+            )
+        )
+    result["model"] = base.gemini_model
+    result["judge_model"] = args.judge_model
+    result["prices_usd_per_million"] = {**DEFAULT_PRICES, **base.model_prices}.get(
+        base.gemini_model
+    )
     result["subset"] = args.subset
     human = None if args.no_human_export else args.out / "human_grading.csv"
     write_outputs(result, args.out, human)
