@@ -324,3 +324,20 @@ def test_ollama_answer_model_uses_the_answer_json_schema():
     model = build_answer_model(Settings(chat_provider="ollama", ollama_model="qwen2.5:7b"))
     assert model.format == AgentAnswer.model_json_schema()
     assert build_answer_model(Settings(gemini_api_key="k")) is None
+
+
+def test_unexpected_tool_arguments_are_ignored():
+    import asyncio
+
+    from conftest import ScriptedModel, final, synthetic_session, tool_call, tool_results
+
+    from app.agent.graph import run_agent
+
+    session, _ = synthetic_session(limit=60)
+    model = ScriptedModel(
+        script=[tool_call(("get_match_stats", {"team": "home", "minute": 10})), final("Level.")]
+    )
+    result = asyncio.run(run_agent(model, session.view(), "Score?", "simple"))
+    stats = tool_results(model.calls[1], "get_match_stats")[0]
+    assert "error" not in stats and "teams" in stats
+    assert result["tools_used"] == [{"tool": "get_match_stats", "args": {}}]

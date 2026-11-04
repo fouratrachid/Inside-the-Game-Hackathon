@@ -143,3 +143,73 @@ def test_retry_message_names_the_allowed_sources(kb):
 
     result, _ = ask(kb, tool_call(("lookup_definition", {"query": "field tilt"})), bad, fixed)
     assert result["cited_sources"] == ["knowledge/field-tilt.md"]
+
+
+def test_definition_question_cannot_be_answered_from_memory(kb):
+    from app.agent.graph import DEFINITION_UNAVAILABLE
+
+    memory = final("Field tilt is the share of possession in the opponent's half.")
+
+    def admits(messages):
+        assert "definition question" in messages[-2].content
+        return final(DEFINITION_UNAVAILABLE)
+
+    empty = type("Empty", (), {"search": lambda self, query, k=None: []})()
+    result, _ = ask(
+        empty, tool_call(("lookup_definition", {"query": "field tilt"})), memory, admits
+    )
+    assert result["text"] == DEFINITION_UNAVAILABLE and result["cited_sources"] == []
+
+
+def test_definition_question_from_memory_fails_after_retry_when_lookup_errors():
+    class Broken:
+        def search(self, query, k=None):
+            raise ValueError("The definitions index is empty.")
+
+    wrong = final("Field tilt is possession share.")
+    with pytest.raises(HTTPException):
+        ask(Broken(), tool_call(("lookup_definition", {"query": "x"})), wrong, wrong)
+
+
+def test_definition_detector():
+    from app.agent.graph import is_definition_question
+
+    assert is_definition_question("What does field tilt mean?")
+    assert is_definition_question("How is xG calculated?")
+    assert not is_definition_question("Who has more xG?")
+
+
+def test_empty_index_is_built_automatically(tmp_path, caplog):
+    from app.rag.knowledge import LazyKnowledgeBase
+
+    settings = Settings(rag_path=str(tmp_path / "db"), rag_embedder="hash")
+    with caplog.at_level("WARNING"):
+        hits = LazyKnowledgeBase(settings).search("what is field tilt")
+    assert hits and "is empty; building it" in caplog.text
+    assert LazyKnowledgeBase(settings).search("field tilt")  # Second open reuses it.
+
+
+def test_failed_index_build_logs_the_fix(tmp_path, caplog, monkeypatch):
+    from app.rag import ingest as ingest_module
+    from app.rag.knowledge import LazyKnowledgeBase
+
+    def broken(*args, **kwargs):
+        raise OSError("no files")
+
+    monkeypatch.setattr(ingest_module, "ingest", broken)
+    settings = Settings(rag_path=str(tmp_path / "db"), rag_embedder="hash")
+    with caplog.at_level("WARNING"), pytest.raises(ValueError):
+        LazyKnowledgeBase(settings).search("xg")
+    assert "python -m app.rag.ingest" in caplog.text
+
+
+def test_app_startup_builds_the_index(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from app.main import create_app
+
+    monkeypatch.setenv("GAME_RAG_PATH", str(tmp_path / "db"))
+    monkeypatch.setenv("GAME_RAG_BUILD_ON_STARTUP", "true")
+    app = create_app()
+    with TestClient(app):
+        assert app.state.agent.knowledge._kb.store.count() > 0

@@ -32,15 +32,35 @@ class LazyKnowledgeBase:
         self.settings = settings
         self._kb: KnowledgeBase | None = None
 
-    def search(self, query: str, k: int | None = None) -> list[dict]:
+    def ensure_index(self) -> KnowledgeBase:
+        """Open the index, building it from knowledge/*.md if it is empty."""
         if self._kb is None:
             store = ChromaStore(self.settings.rag_path, collection_name(self.settings))
+            embedder = build_embedder(self.settings)
             if store.count() == 0:
-                raise ValueError(
-                    "The definitions index is empty. Run: pipenv run python -m app.rag.ingest"
+                from app.rag.ingest import ingest
+
+                logger.warning(
+                    "The definitions index %s is empty; building it from knowledge/*.md.",
+                    collection_name(self.settings),
                 )
-            self._kb = KnowledgeBase(store, build_embedder(self.settings), self.settings.rag_top_k)
-        return self._kb.search(query, k)
+                try:
+                    report = ingest(store, embedder)
+                except Exception as error:
+                    logger.warning(
+                        "Could not build the definitions index (%s). lookup_definition will "
+                        "fail until you run: pipenv run python -m app.rag.ingest",
+                        type(error).__name__,
+                    )
+                    raise ValueError(
+                        "The definitions index is empty. Run: pipenv run python -m app.rag.ingest"
+                    ) from error
+                logger.warning("Built the definitions index: %s", report)
+            self._kb = KnowledgeBase(store, embedder, self.settings.rag_top_k)
+        return self._kb
+
+    def search(self, query: str, k: int | None = None) -> list[dict]:
+        return self.ensure_index().search(query, k)
 
 
 def build_knowledge(settings):

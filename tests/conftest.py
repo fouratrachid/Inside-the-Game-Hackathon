@@ -15,6 +15,7 @@ def _offline_settings(monkeypatch):
     """Tests never write trace logs into the repository or build a real embedder."""
     monkeypatch.setenv("GAME_TRACE_LOG", "")
     monkeypatch.setenv("GAME_RAG_EMBEDDER", "hash")
+    monkeypatch.setenv("GAME_RAG_BUILD_ON_STARTUP", "false")
 
 
 async def run_replay(events, match, session, collect=None):

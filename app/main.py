@@ -1,6 +1,8 @@
 """HTTP entry point: replay streams, server-side match sessions and match chat."""
 
+import asyncio
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
@@ -25,13 +27,25 @@ from app.shifts import ShiftSettings
 
 def create_app() -> FastAPI:
     settings = Settings()
-    application = FastAPI(title=settings.app_name, version="0.1.0")
+    knowledge = build_knowledge(settings)
+
+    @asynccontextmanager
+    async def lifespan(_app):
+        # An empty definitions index is built at startup (or a clear warning is logged).
+        if knowledge is not None and settings.rag_build_on_startup:
+            try:
+                await asyncio.to_thread(knowledge.ensure_index)
+            except ValueError:
+                pass  # Already logged with the command to fix it.
+        yield
+
+    application = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
     application.state.source = build_source(settings)
     application.state.settings = settings
     application.state.chat = MatchChat(settings)
     application.state.tracer = build_tracer(settings)
     application.state.agent = MatchAgent(
-        settings, tracer=application.state.tracer, knowledge=build_knowledge(settings)
+        settings, tracer=application.state.tracer, knowledge=knowledge
     )
     application.state.limiter = RateLimiter(
         settings.chat_rate_limit, settings.chat_rate_window_seconds

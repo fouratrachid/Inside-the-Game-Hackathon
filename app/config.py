@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     rag_collection: str = "touchline_knowledge"
     rag_embedder: Literal["fastembed", "gemini", "hash"] = "fastembed"
     rag_fastembed_model: str = "BAAI/bge-small-en-v1.5"
+    rag_build_on_startup: bool = True
     rag_top_k: int = Field(default=3, ge=1, le=10)
     chat_rate_limit: int = Field(default=10, ge=0)  # Questions per session per window.
     chat_rate_window_seconds: float = Field(default=60, gt=0)
