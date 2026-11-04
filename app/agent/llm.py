@@ -37,6 +37,27 @@ def model_name(settings: Settings) -> str:
     }[effective_provider(settings)]
 
 
+def build_answer_model(settings: Settings) -> BaseChatModel | None:
+    """A tool-free model whose output is constrained to the answer JSON schema.
+
+    Only Ollama: small local models often break the JSON format, and Ollama's `format`
+    accepts a JSON schema. Other providers return None (no extra call).
+    """
+    if effective_provider(settings) != "ollama":
+        return None
+    from langchain_ollama import ChatOllama
+
+    from app.agent.graph import AgentAnswer
+
+    return ChatOllama(
+        base_url=settings.ollama_url,
+        model=settings.ollama_model,
+        temperature=0.2,
+        num_predict=600,
+        format=AgentAnswer.model_json_schema(),
+    )
+
+
 def build_model(settings: Settings) -> BaseChatModel:
     provider = effective_provider(settings)
     if provider == "offline":

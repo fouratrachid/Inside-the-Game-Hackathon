@@ -13,7 +13,13 @@ from fastapi import HTTPException
 from langchain_core.language_models import BaseChatModel
 
 from app.agent.graph import AgentContext, AgentFailure, run_agent, stream_agent
-from app.agent.llm import PROVIDER_LABELS, build_model, effective_provider, model_name
+from app.agent.llm import (
+    PROVIDER_LABELS,
+    build_answer_model,
+    build_model,
+    effective_provider,
+    model_name,
+)
 from app.config import Settings
 from app.guardrails import check_question
 from app.observability import Tracer
@@ -87,6 +93,8 @@ class MatchAgent:
     ):
         self.settings = settings
         self._model = model
+        self._injected = model is not None
+        self._answer_model = None
         self.tracer = tracer or Tracer()
         self.knowledge = knowledge
         self.cache = AnswerCache(settings.cache_max_entries, settings.cache_ttl_seconds)
@@ -100,6 +108,14 @@ class MatchAgent:
         if self._model is None:
             self._model = build_model(self.settings)
         return self._model
+
+    def answer_model(self) -> BaseChatModel | None:
+        """Structured-output model for the final answer; skipped when a model was injected."""
+        if self._injected:
+            return None
+        if self._answer_model is None:
+            self._answer_model = build_answer_model(self.settings)
+        return self._answer_model
 
     def _secrets(self) -> list[str]:
         s = self.settings
@@ -189,6 +205,7 @@ class MatchAgent:
             prices=self.prices,
             secrets=self._secrets(),
             flags=check.flags,
+            answer_model=self.answer_model(),
         )
         return None, (view, context, key, base, root)
 

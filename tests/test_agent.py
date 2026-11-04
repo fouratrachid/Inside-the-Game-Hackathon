@@ -146,7 +146,7 @@ def test_tool_errors_go_back_to_the_model(half):
         tool_call(("get_recent_events", {"team": "Nowhere Rovers"}), ("no_such_tool", {})),
         final("I could not find that team."),
     )
-    errors = [unwrap(m.content)["error"] for m in model.calls[1][-2:]]
+    errors = [unwrap(m.content)["error"] for m in model.calls[1][-3:-1]]  # [-1] is the sources note
     assert "Unknown team" in errors[0] and "Unknown tool" in errors[1]
     assert result["tools_used"] == []
 
@@ -274,3 +274,53 @@ def test_maf_setting_still_runs_the_original_workflow(monkeypatch):
         "get_recent_events",
         "get_player_summary",
     ]
+
+
+def test_invalid_json_is_repaired_by_the_structured_answer_model():
+    import asyncio
+
+    from conftest import ScriptedModel, final, synthetic_session, tool_call
+    from langchain_core.messages import AIMessage
+
+    from app.agent.graph import AgentContext, run_agent
+    from app.sessions import SessionView  # noqa: F401
+
+    session, _ = synthetic_session(limit=60)
+    model = ScriptedModel(script=[tool_call(("get_match_stats", {})), AIMessage("Sure! {text:")])
+    structured = ScriptedModel(script=[final("Scores are level so far.")])
+    context = AgentContext(answer_model=structured)
+    result = asyncio.run(run_agent(model, session.view(), "Score?", "simple", context=context))
+    assert result["text"] == "Scores are level so far."
+    assert len(structured.calls) == 1 and result["usage"]["model_calls"] == 3
+
+
+def test_valid_json_skips_the_structured_answer_model():
+    import asyncio
+
+    from conftest import ScriptedModel, final, synthetic_session
+
+    from app.agent.graph import AgentContext, run_agent
+
+    session, _ = synthetic_session(limit=60)
+    structured = ScriptedModel()
+    context = AgentContext(answer_model=structured)
+    result = asyncio.run(
+        run_agent(
+            ScriptedModel(script=[final("Level.")]),
+            session.view(),
+            "Score?",
+            "simple",
+            context=context,
+        )
+    )
+    assert result["text"] == "Level." and structured.calls == []
+
+
+def test_ollama_answer_model_uses_the_answer_json_schema():
+    from app.agent.graph import AgentAnswer
+    from app.agent.llm import build_answer_model
+    from app.config import Settings
+
+    model = build_answer_model(Settings(chat_provider="ollama", ollama_model="qwen2.5:7b"))
+    assert model.format == AgentAnswer.model_json_schema()
+    assert build_answer_model(Settings(gemini_api_key="k")) is None

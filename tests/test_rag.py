@@ -82,7 +82,7 @@ def test_definition_questions_use_lookup_and_cite_sources(kb):
     assert "lookup_definition" in model.bound_tools
     assert result["tools_used"][0]["tool"] == "lookup_definition"
     assert result["cited_sources"] == ["knowledge/field-tilt.md"]
-    assert "cite the source files" in model.calls[2][-1].content  # First try lacked sources.
+    assert "cite the source files" in model.calls[2][-2].content  # First try lacked sources.
 
 
 def test_invented_sources_are_rejected(kb):
@@ -93,3 +93,53 @@ def test_invented_sources_are_rejected(kb):
     with pytest.raises(HTTPException) as error:
         ask(kb, tool_call(("lookup_definition", {"query": "field tilt"})), bad, again)
     assert error.value.status_code == 502
+
+
+def test_prompt_restricts_sources_to_retrieved_paths():
+    from app.agent.graph import SYSTEM_PROMPT
+
+    assert "ONLY exact paths that lookup_definition returned" in SYSTEM_PROMPT
+    assert "cited_sources is []" in SYSTEM_PROMPT
+    assert "knowledge/<file>.md" not in SYSTEM_PROMPT  # The template invited invented names.
+
+
+def test_retrieved_paths_are_shown_before_the_answer(kb):
+    def answer(messages):
+        note = messages[-1].content
+        assert note.startswith("Allowed cited_sources (exact paths")
+        allowed = json.loads(note.split(": ", 1)[1].rsplit(". Cite", 1)[0])
+        assert "knowledge/field-tilt.md" in allowed
+        message = final("Field tilt is the share of attacking-third passes.")
+        data = json.loads(message.content)
+        data["cited_sources"] = allowed[:1]
+        message.content = json.dumps(data)
+        return message
+
+    result, _ = ask(kb, tool_call(("lookup_definition", {"query": "field tilt"})), answer)
+    assert result["cited_sources"]
+
+
+def test_without_lookup_the_model_is_told_sources_must_be_empty(kb):
+    def answer(messages):
+        assert "Allowed cited_sources: none" in messages[-1].content
+        return final("It is level.")
+
+    ask(kb, tool_call(("get_match_stats", {})), answer, question="What is the score?")
+
+
+def test_retry_message_names_the_allowed_sources(kb):
+    bad = final("Field tilt.")
+    bad.content = bad.content[:-1] + ', "cited_sources": ["knowledge/get_match_stats.md"]}'
+
+    def fixed(messages):
+        retry = messages[-2].content  # [-1] is the per-turn sources note.
+        assert "['knowledge/get_match_stats.md'] were not retrieved" in retry
+        assert "knowledge/field-tilt.md" in retry and "Cite only paths from this list" in retry
+        message = final("Field tilt.")
+        data = json.loads(message.content)
+        data["cited_sources"] = ["knowledge/field-tilt.md"]
+        message.content = json.dumps(data)
+        return message
+
+    result, _ = ask(kb, tool_call(("lookup_definition", {"query": "field tilt"})), bad, fixed)
+    assert result["cited_sources"] == ["knowledge/field-tilt.md"]

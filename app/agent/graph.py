@@ -74,11 +74,15 @@ SYSTEM_PROMPT = (
     "zero; if both teams have zero of a stat, say 'No [action] so far, as far as I know.' Do "
     "not invent causes, formations or off-ball movement. When explaining a metric, call "
     "lookup_definition (if available) and cite the source files it returned.\n"
+    "cited_sources lists ONLY exact paths that lookup_definition returned in this "
+    "conversation, copied character for character (for example knowledge/field-tilt.md). "
+    "Tool names are not sources: never write paths such as knowledge/get_match_stats.md. If "
+    "lookup_definition was not called or returned nothing, cited_sources is [].\n"
     "When you have enough evidence, reply with ONLY this JSON and no other text: "
     '{"text": "<2-3 short sentences, at most 70 words>", "cited_event_ids": ["<id>"], '
     '"snapshot_minute": <the replay minute your answer describes>, "cited_sources": '
-    '["knowledge/<file>.md"]}. Cite at most six event IDs, only from tool results; use empty '
-    "lists when nothing applies."
+    "[<exact retrieved paths, or nothing>]}. Cite at most six event IDs, only from tool "
+    "results; use empty lists when nothing applies."
 )
 
 AUDIENCE = {
@@ -120,6 +124,22 @@ class AgentContext:
     prices: dict = field(default_factory=dict)
     secrets: list[str] = field(default_factory=list)
     flags: list[str] = field(default_factory=list)
+    # Optional tool-free model constrained to the answer JSON schema (Ollama `format`). Used
+    # to produce the final answer when the tool-calling reply is not valid answer JSON.
+    answer_model: BaseChatModel | None = None
+
+
+def sources_note(retrieved: set[str]) -> str:
+    """Tell the model exactly which cited_sources values are allowed."""
+    if not retrieved:
+        return (
+            "Allowed cited_sources: none. lookup_definition returned no documents in this "
+            'conversation, so use "cited_sources": [].'
+        )
+    return (
+        f"Allowed cited_sources (exact paths retrieved by lookup_definition): "
+        f"{json.dumps(sorted(retrieved))}. Cite only paths from this list."
+    )
 
 
 def _span(context: AgentContext, name: str, kind: str, input=None, metadata=None):
@@ -148,6 +168,9 @@ def build_graph(
 
     async def agent(state: AgentState) -> dict:
         messages = state["messages"]
+        if state["rounds"] > 0:
+            # Shown before every post-tool turn; not stored in the conversation state.
+            messages = [*messages, HumanMessage(sources_note(tools.retrieved_sources))]
         if state["rounds"] >= max_rounds:
             messages = [*messages, HumanMessage("Tool budget reached. Answer now without tools.")]
         span = _span(context, "agent", "generation", metadata={"model": context.model_label})
@@ -157,6 +180,20 @@ def build_graph(
             "input_tokens": int(tokens.get("input_tokens", 0)),
             "output_tokens": int(tokens.get("output_tokens", 0)),
         }
+        calls = 1
+        answering = not (isinstance(response, AIMessage) and response.tool_calls)
+        if context.answer_model is not None and (answering or state["rounds"] >= max_rounds):
+            try:
+                parse_answer(message_text(response))
+            except ValueError, ValidationError:
+                # Re-ask in structured-output mode: the reply is constrained to the schema.
+                response = await context.answer_model.ainvoke(
+                    [*messages, HumanMessage("Reply now with only the answer JSON.")]
+                )
+                extra = getattr(response, "usage_metadata", None) or {}
+                usage["input_tokens"] += int(extra.get("input_tokens", 0))
+                usage["output_tokens"] += int(extra.get("output_tokens", 0))
+                calls += 1
         cost = cost_usd(
             context.model_label, usage["input_tokens"], usage["output_tokens"], context.prices
         )
@@ -170,7 +207,7 @@ def build_graph(
         )
         return {
             "messages": [response],
-            "usage": {**usage, "cost_usd": cost, "model_calls": 1},
+            "usage": {**usage, "cost_usd": cost, "model_calls": calls},
         }
 
     def after_agent(state: AgentState) -> Literal["tools", "answer"]:
@@ -247,10 +284,12 @@ def build_graph(
                 problem = f"snapshot_minute {draft['snapshot_minute']} is after the replay clock "
                 problem += f"({clock_minute}). Describe only the match so far."
             elif not sources <= tools.retrieved_sources:
-                problem = "cited_sources must come from lookup_definition results: "
-                problem += f"{sorted(sources - tools.retrieved_sources)} were not retrieved."
+                problem = f"cited_sources {sorted(sources - tools.retrieved_sources)} were not "
+                problem += "retrieved by lookup_definition. "
+                problem += sources_note(tools.retrieved_sources)
             elif tools.retrieved_sources and not sources:
-                problem = "You used lookup_definition: cite the source files you relied on."
+                problem = "You used lookup_definition: cite the source files you relied on. "
+                problem += sources_note(tools.retrieved_sources)
             elif guard:
                 problem = f"The answer failed output checks ({', '.join(guard)}). Describe only "
                 problem += "the match so far from tool results and never reveal settings."
