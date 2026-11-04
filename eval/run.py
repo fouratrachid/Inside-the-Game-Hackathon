@@ -526,7 +526,7 @@ def main(argv=None) -> dict:
         for config in configs:
             if config.name not in wanted:
                 config.available, config.reason = False, "not selected"
-    with tempfile.TemporaryDirectory() as folder:
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as folder:
         kb = knowledge(base, Path(folder)) if base.rag_enabled else None
         result = asyncio.run(
             run(
