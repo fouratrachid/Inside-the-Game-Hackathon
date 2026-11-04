@@ -9,43 +9,28 @@
       "expected": {
         "score": "1-0"
       },
-      "answer": "Northbridge FC leads 1-0. They have 45.2% xG, compared to Southbank United's 9.9%. Northbridge FC has a better chance of scoring based on shot quality.",
+      "answer": "Northbridge FC leads 1-0.",
       "error": null,
       "cited_event_ids": [],
-      "cited_sources": [
-        "knowledge/xg.md"
-      ],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
           "args": {
-            "minute": 19,
-            "period": 1
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xg"
-          }
-        },
-        {
-          "tool": "get_match_stats",
-          "args": {
-            "minute": 19,
-            "period": 1
+            "team": null,
+            "type": null
           }
         }
       ],
-      "latency_s": 28.0351,
+      "latency_s": 32.7737,
       "attempts": 1,
-      "input_tokens": 7484,
-      "output_tokens": 191,
-      "model_calls": 5,
+      "input_tokens": 2360,
+      "output_tokens": 61,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "The answer correctly states the score but includes additional information not requested, such as xG percentages, which are not relevant to the question.",
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and grounded in the evidence, but it does not specify which teams are playing, which is a minor omission.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
@@ -64,23 +49,33 @@
         "home.shots": 5,
         "away.shots": 2
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 5 shots, while Southbank United has 2.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 18.7657,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "shots": {
+              "away": "Southbank United",
+              "home": "Northbridge FC"
+            }
+          }
+        }
+      ],
+      "latency_s": 12.1904,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2373,
+      "output_tokens": 78,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any additional assumptions.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -99,47 +94,36 @@
       "answer": "Northbridge FC has created better chances so far, with an xG of 0.452 compared to Southbank United's 0.099.",
       "error": null,
       "cited_event_ids": [],
-      "cited_sources": [
-        "knowledge/xg.md",
-        "knowledge/xt.md"
-      ],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
           "args": {
-            "period": 1,
-            "minute": 19
+            "stats": [
+              "xG"
+            ],
+            "team": "Northbridge FC"
           }
         },
         {
-          "tool": "lookup_definition",
+          "tool": "get_match_stats",
           "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "compare_periods",
-          "args": {
-            "start_min": 0,
-            "end_min": 19
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xT"
+            "team": "Southbank United",
+            "stats": [
+              "xG"
+            ]
           }
         }
       ],
-      "latency_s": 24.4544,
+      "latency_s": 18.1556,
       "attempts": 1,
-      "input_tokens": 8474,
-      "output_tokens": 169,
-      "model_calls": 5,
+      "input_tokens": 2688,
+      "output_tokens": 123,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the provided evidence, but it uses a term (xT) not mentioned in the expected facts or tools used, which is a minor issue.",
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded in the provided evidence, clear, and directly addresses the question asked.",
       "facts_matched": 2,
       "facts_total": 2,
       "fact_accuracy": 1.0,
@@ -158,23 +142,31 @@
         "home.possession": 48.8,
         "away.possession": 51.2
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 48.8% possession, while Southbank United has 51.2%.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 16.5415,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "team": null,
+            "type": null
+          }
+        }
+      ],
+      "latency_s": 10.8466,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2360,
+      "output_tokens": 76,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -190,23 +182,36 @@
         "home.field_tilt": 37.5,
         "away.field_tilt": 62.5
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has a field tilt of 37.5%, indicating 37.5% of their completed passes start in the attacking third.",
+      "error": null,
       "cited_event_ids": [],
-      "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 26.835,
+      "cited_sources": [
+        "knowledge/field-tilt.md"
+      ],
+      "tools_used": [
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "field tilt"
+          }
+        },
+        {
+          "tool": "get_match_stats",
+          "args": {}
+        }
+      ],
+      "latency_s": 16.9906,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2744,
+      "output_tokens": 103,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 3,
+      "judge_justification": "The answer addresses the question but does not provide the away team's field tilt and includes unnecessary detail about Northbridge FC, which is not relevant to the question.",
+      "facts_matched": 1,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 0.5,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -222,23 +227,30 @@
         "player.passes": 8,
         "player.completed": 8
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge 10 has made 8 passes so far.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 34.7983,
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Northbridge 10"
+          }
+        }
+      ],
+      "latency_s": 15.0299,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 3039,
+      "output_tokens": 100,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -254,63 +266,40 @@
         "player.shots": 2,
         "player.xg": 0.292
       },
-      "answer": "Northbridge 11 has taken 3 shots, contributing 0.258 xG so far, as far as I know.",
+      "answer": "Northbridge FC has taken 5 shots and generated 0.452 xG so far.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-26",
-        "synthetic-42-15",
-        "synthetic-42-10"
-      ],
-      "cited_sources": [
-        "knowledge/xg.md",
-        "knowledge/field-tilt.md"
-      ],
+      "cited_event_ids": [],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
           "args": {
             "team": "Northbridge FC",
-            "stats": [
-              "shots",
-              "xG"
-            ]
+            "type": "shots"
           }
         },
         {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "get_recent_events",
+          "tool": "get_match_stats",
           "args": {
             "team": "Northbridge FC",
-            "type": "Shot",
-            "n": 5
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "field tilt"
+            "type": "xG"
           }
         }
       ],
-      "latency_s": 29.9574,
+      "latency_s": 15.2023,
       "attempts": 1,
-      "input_tokens": 8766,
-      "output_tokens": 208,
-      "model_calls": 5,
+      "input_tokens": 2705,
+      "output_tokens": 107,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "The answer addresses the question but with a notable gap: it mentions Northbridge 11 instead of Northbridge FC, and the number of shots is incorrect. Additionally, the xG value is slightly off.",
+      "judge_score": 2,
+      "judge_justification": "The answer is partly wrong as it provides incorrect shot and xG numbers, and it is not grounded as it includes future events.",
       "facts_matched": 0,
       "facts_total": 2,
       "fact_accuracy": 0.0,
-      "cited": 3,
-      "cited_valid": 3,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -325,33 +314,11 @@
         "window.away.shots": 2,
         "window.home.passes": 40
       },
-      "answer": "Northbridge FC had more shots and higher xG in the first 15 minutes, with 4 shots (0.34 xG) compared to Southbank United's 2 shots (0.099 xG). Northbridge FC also had more passes (40) and completed passes (36) in this period.",
+      "answer": "Northbridge FC had more shots, xG and passes in the first 15 minutes compared to Southbank United.",
       "error": null,
       "cited_event_ids": [],
-      "cited_sources": [
-        "knowledge/xg.md",
-        "knowledge/field-tilt.md"
-      ],
+      "cited_sources": [],
       "tools_used": [
-        {
-          "tool": "compare_periods",
-          "args": {
-            "start_min": 0,
-            "end_min": 15
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "field tilt"
-          }
-        },
         {
           "tool": "compare_periods",
           "args": {
@@ -360,18 +327,18 @@
           }
         }
       ],
-      "latency_s": 28.8304,
+      "latency_s": 11.9181,
       "attempts": 1,
-      "input_tokens": 8329,
-      "output_tokens": 206,
-      "model_calls": 5,
+      "input_tokens": 2326,
+      "output_tokens": 79,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 3,
-      "judge_justification": "The answer addresses the question but does not mention the 'field tilt' or use the 'compare_periods' tool results, and it introduces xG without explaining what it is, which is a minor jargon issue.",
-      "facts_matched": 3,
+      "judge_justification": "Answers the question but does not mention the exact number of shots and passes, and uses xG which is not in the expected facts.",
+      "facts_matched": 0,
       "facts_total": 3,
-      "fact_accuracy": 1.0,
+      "fact_accuracy": 0.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -386,7 +353,7 @@
       "expected": {
         "momentum.leader": "Southbank United"
       },
-      "answer": "Southbank United has been on top, leading in xT added and momentum since the 1st minute of the period.",
+      "answer": "Southbank United has led in xT added over the last 10 minutes, but the momentum proxy is slightly in favor of Northbridge FC.",
       "error": null,
       "cited_event_ids": [
         "synthetic-42-25",
@@ -402,15 +369,15 @@
           }
         }
       ],
-      "latency_s": 24.7564,
+      "latency_s": 15.3974,
       "attempts": 1,
-      "input_tokens": 3717,
-      "output_tokens": 196,
-      "model_calls": 3,
+      "input_tokens": 2423,
+      "output_tokens": 109,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "Answers the question but with a minor omission; it does not specify that Southbank United has been on top in the last 10 minutes specifically.",
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and grounded, but it could be more concise and directly state that Southbank United is on top without mentioning the slight favor for Northbridge FC.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
@@ -428,23 +395,31 @@
       "expected": {
         "score": "1-0"
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC leads 1-0.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 28.4539,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "team": null,
+            "type": null
+          }
+        }
+      ],
+      "latency_s": 9.2664,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2362,
+      "output_tokens": 61,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully answers the question. It matches the expected facts and does not introduce any future information.",
+      "facts_matched": 1,
       "facts_total": 1,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -460,23 +435,30 @@
         "home.shots": 7,
         "away.shots": 6
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 7 shots, while Southbank United has 6 shots.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 18.7377,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "shots": {}
+          }
+        }
+      ],
+      "latency_s": 9.5113,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2365,
+      "output_tokens": 65,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question asked.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -492,23 +474,37 @@
         "home.xg": 0.538,
         "away.xg": 0.708
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Southbank United has created better chances so far, with a higher xG of 0.708 compared to Northbridge FC's 0.538.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 65.1284,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "xG": {
+              "away_team": "Southbank United",
+              "home_team": "Northbridge FC"
+            },
+            "shots": {
+              "away_team": "Southbank United",
+              "home_team": "Northbridge FC"
+            }
+          }
+        }
+      ],
+      "latency_s": 19.8884,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 3219,
+      "output_tokens": 161,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and grounded in the provided evidence, but it slightly omits that the question asks specifically about 'better chances' which could be interpreted differently from xG.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -524,63 +520,32 @@
         "home.possession": 47.4,
         "away.possession": 52.6
       },
-      "answer": "Northbridge FC has 47.4% possession, with a slight field tilt of 42.9% to their attacking third.",
+      "answer": "Northbridge FC has 47.4% possession, while Southbank United has 52.6%.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-393",
-        "synthetic-42-392",
-        "synthetic-42-391",
-        "synthetic-42-390",
-        "synthetic-42-389"
-      ],
-      "cited_sources": [
-        "knowledge/possession.md"
-      ],
+      "cited_event_ids": [],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
           "args": {
-            "possession": true,
-            "shots": true,
-            "xG": true,
-            "field_tilt": true
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "possession estimate"
-          }
-        },
-        {
-          "tool": "get_momentum",
-          "args": {
-            "window_min": 5
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "n": 5,
-            "team": "Northbridge FC",
-            "type": "Pass"
+            "possession": {}
           }
         }
       ],
-      "latency_s": 31.9019,
+      "latency_s": 9.7845,
       "attempts": 1,
-      "input_tokens": 8826,
-      "output_tokens": 233,
-      "model_calls": 5,
+      "input_tokens": 2360,
+      "output_tokens": 73,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "The answer provides the correct possession percentages but does not clearly state that these are for the home and away teams. It also introduces an unexplained field tilt percentage.",
-      "facts_matched": 1,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.5,
-      "cited": 5,
-      "cited_valid": 5,
+      "fact_accuracy": 1.0,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -594,7 +559,7 @@
         "home.field_tilt": 42.9,
         "away.field_tilt": 57.1
       },
-      "answer": "Northbridge FC has a field tilt of 42.9%, indicating 43% of their completed passes start in the attacking third. Southbank United's field tilt is 57.1%, suggesting they are more dominant in the attacking third so far.",
+      "answer": "Northbridge FC has a field tilt of 42.9%, indicating 43% of their completed passes start in the attacking third.",
       "error": null,
       "cited_event_ids": [],
       "cited_sources": [
@@ -609,24 +574,21 @@
         },
         {
           "tool": "get_match_stats",
-          "args": {
-            "team": null,
-            "type": null
-          }
+          "args": {}
         }
       ],
-      "latency_s": 17.8727,
+      "latency_s": 13.7467,
       "attempts": 1,
-      "input_tokens": 2594,
-      "output_tokens": 134,
+      "input_tokens": 2746,
+      "output_tokens": 101,
       "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the provided evidence, but it slightly omits that the field tilt percentages refer to both teams combined, not just Northbridge FC or Southbank United individually.",
-      "facts_matched": 2,
+      "judge_score": 3,
+      "judge_justification": "The answer addresses the question but confuses the field tilt percentages with pass completion and attacking third, which is not supported by the evidence.",
+      "facts_matched": 1,
       "facts_total": 2,
-      "fact_accuracy": 1.0,
+      "fact_accuracy": 0.5,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -642,23 +604,30 @@
         "player.passes": 16,
         "player.completed": 16
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge 10 has made 16 passes so far, as far as I know.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 82.8537,
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Northbridge 10"
+          }
+        }
+      ],
+      "latency_s": 9.8087,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2311,
+      "output_tokens": 72,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -674,60 +643,40 @@
         "player.shots": 3,
         "player.xg": 0.325
       },
-      "answer": "Southbank 6 has taken 3 shots, with a combined xG of 0.708.",
+      "answer": "Southbank United has taken 6 shots, contributing 0.708 xG.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-292",
-        "synthetic-42-58",
-        "synthetic-42-44"
-      ],
-      "cited_sources": [
-        "knowledge/xg.md"
-      ],
+      "cited_event_ids": [],
+      "cited_sources": [],
       "tools_used": [
         {
-          "tool": "get_recent_events",
+          "tool": "get_match_stats",
           "args": {
-            "n": 6,
-            "team": "Southbank United",
-            "type": "Shot"
+            "type": "shots",
+            "team": "Southbank United"
           }
         },
         {
           "tool": "get_match_stats",
           "args": {
-            "period": 1,
             "team": "Southbank United",
-            "type": "shots"
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "get_shot",
-          "args": {
-            "event_id": "synthetic-42-292"
+            "type": "xG"
           }
         }
       ],
-      "latency_s": 31.7973,
+      "latency_s": 14.201,
       "attempts": 1,
-      "input_tokens": 8940,
-      "output_tokens": 204,
-      "model_calls": 5,
+      "input_tokens": 2707,
+      "output_tokens": 105,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "The answer correctly states the number of shots but overstates the xG, and the number of shots is not explicitly linked to Southbank 6.",
-      "facts_matched": 1,
+      "judge_score": 2,
+      "judge_justification": "The answer is partly wrong as it provides incorrect numbers for shots and xG, and it does not match the expected facts.",
+      "facts_matched": 0,
       "facts_total": 2,
-      "fact_accuracy": 0.5,
-      "cited": 3,
-      "cited_valid": 3,
+      "fact_accuracy": 0.0,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -742,13 +691,10 @@
         "window.away.shots": 2,
         "window.home.passes": 40
       },
-      "answer": "Northbridge FC had more shots and higher xG in the first 15 minutes, while Southbank United dominated later on.",
+      "answer": "Northbridge FC had more shots, xG and passes in the first 15 minutes, while Southbank United was more successful in passing.",
       "error": null,
       "cited_event_ids": [],
-      "cited_sources": [
-        "knowledge/xg.md",
-        "knowledge/field-tilt.md"
-      ],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "compare_periods",
@@ -756,36 +702,17 @@
             "start_min": 0,
             "end_min": 15
           }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "field tilt"
-          }
-        },
-        {
-          "tool": "compare_periods",
-          "args": {
-            "end_min": 15,
-            "start_min": 0
-          }
         }
       ],
-      "latency_s": 24.9546,
+      "latency_s": 11.2012,
       "attempts": 1,
-      "input_tokens": 8369,
-      "output_tokens": 163,
-      "model_calls": 5,
+      "input_tokens": 2334,
+      "output_tokens": 85,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 3,
-      "judge_justification": "Answers the question but with a notable gap (missing passes data), and an unclear sentence structure.",
+      "judge_justification": "Answers the question but with a notable gap (missing shots and xG data) and an unclear sentence structure.",
       "facts_matched": 0,
       "facts_total": 3,
       "fact_accuracy": 0.0,
@@ -803,15 +730,12 @@
       "expected": {
         "momentum.leader": "Northbridge FC"
       },
-      "answer": "Northbridge FC has been on top in the last 10 minutes, leading Southbank United in xT added by 0.1014.",
+      "answer": "Northbridge FC has been on top in the last 10 minutes, leading in xT added 0.167 to 0.066.",
       "error": null,
       "cited_event_ids": [
         "synthetic-42-352",
         "synthetic-42-350",
-        "synthetic-42-374",
-        "synthetic-42-25",
-        "synthetic-42-24",
-        "synthetic-42-14"
+        "synthetic-42-374"
       ],
       "cited_sources": [],
       "tools_used": [
@@ -822,20 +746,20 @@
           }
         }
       ],
-      "latency_s": 35.6183,
+      "latency_s": 15.4285,
       "attempts": 1,
-      "input_tokens": 4323,
-      "output_tokens": 270,
-      "model_calls": 3,
+      "input_tokens": 2712,
+      "output_tokens": 116,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the evidence, but it could be slightly more concise and avoid using jargon like 'xT' for a football fan audience.",
+      "judge_justification": "The answer is clear and grounded in the evidence, but it could be more concise and remove the specific xT values to make it more readable for a football fan.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
-      "cited": 6,
-      "cited_valid": 6,
+      "cited": 3,
+      "cited_valid": 3,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -848,60 +772,32 @@
       "expected": {
         "score": "1-1"
       },
-      "answer": "The score is 1-1. Northbridge FC has 1 goal from 7 shots, including 2 on target, with an xG of 0.538. Southbank United has 1 goal from 10 shots, 2 on target, with an xG of 1.373.",
+      "answer": "The score is 1-1 after 69 minutes.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-531",
-        "synthetic-42-321"
-      ],
-      "cited_sources": [
-        "knowledge/xg.md"
-      ],
+      "cited_event_ids": [],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
           "args": {
-            "minute": 69,
-            "period": 2
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "n": 5,
-            "team": "Northbridge FC",
-            "type": "Shot"
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "n": 5,
-            "team": "Southbank United",
-            "type": "Shot"
+            "team": null
           }
         }
       ],
-      "latency_s": 34.7302,
+      "latency_s": 8.6422,
       "attempts": 1,
-      "input_tokens": 8759,
-      "output_tokens": 234,
-      "model_calls": 5,
+      "input_tokens": 2359,
+      "output_tokens": 60,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded, but it slightly deviates from the question by providing additional details about shots and xG, which were not requested.",
+      "judge_justification": "The answer is correct and grounded, but it slightly omits the exact minute the replay stopped.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
-      "cited": 2,
-      "cited_valid": 2,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -915,23 +811,33 @@
         "home.shots": 7,
         "away.shots": 10
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 7 shots, while Southbank United has 10 shots.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 19.1407,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "shots": {
+              "away": "Southbank United",
+              "home": "Northbridge FC"
+            }
+          }
+        }
+      ],
+      "latency_s": 10.4791,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2376,
+      "output_tokens": 80,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented or future knowledge.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -947,23 +853,33 @@
         "home.xg": 0.538,
         "away.xg": 1.373
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Southbank United has created better chances so far, with an xG of 1.373 compared to Northbridge FC's 0.538.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 64.9475,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "xG": {
+              "away_team": "Southbank United",
+              "home_team": "Northbridge FC"
+            }
+          }
+        }
+      ],
+      "latency_s": 17.2991,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 3189,
+      "output_tokens": 138,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and correct, but it doesn't explicitly state that 'better chances' is being measured by xG, which could be slightly vague for a football fan unfamiliar with the term.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -979,23 +895,30 @@
         "home.possession": 43.5,
         "away.possession": 56.5
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 43.5% possession, while Southbank United has 56.5%.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 26.3729,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "possession": {}
+          }
+        }
+      ],
+      "latency_s": 9.7139,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2361,
+      "output_tokens": 73,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -1011,7 +934,7 @@
         "home.field_tilt": 38.0,
         "away.field_tilt": 62.0
       },
-      "answer": "Northbridge FC has a field tilt of 38.0%, indicating 38% of their completed passes start in the attacking third.",
+      "answer": "Northbridge FC has a field tilt of 38%, while Southbank United has 62%, indicating Southbank's higher share of attacking-third passes.",
       "error": null,
       "cited_event_ids": [],
       "cited_sources": [
@@ -1026,24 +949,21 @@
         },
         {
           "tool": "get_match_stats",
-          "args": {
-            "team": null,
-            "type": null
-          }
+          "args": {}
         }
       ],
-      "latency_s": 17.9383,
+      "latency_s": 14.1478,
       "attempts": 1,
-      "input_tokens": 2595,
-      "output_tokens": 109,
+      "input_tokens": 2747,
+      "output_tokens": 104,
       "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "The answer addresses the question but does not mention the away team's field tilt, and the explanation of field tilt is a bit unclear for a football fan.",
-      "facts_matched": 1,
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and addresses the question, but it slightly omits the exact minute the replay stopped at.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.5,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -1059,23 +979,30 @@
         "player.passes": 26,
         "player.completed": 23
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Southbank 7 has made 26 passes so far.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 41.1104,
+      "tools_used": [
+        {
+          "tool": "get_player_stats",
+          "args": {
+            "name": "Southbank 7"
+          }
+        }
+      ],
+      "latency_s": 8.9498,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2311,
+      "output_tokens": 64,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 1,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 0.5,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -1091,7 +1018,7 @@
         "player.shots": 3,
         "player.xg": 0.325
       },
-      "answer": "Southbank United has taken 10 shots for 1.373 xG so far.",
+      "answer": "Southbank United has taken 10 shots and generated 1.373 xG so far.",
       "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
@@ -1100,18 +1027,22 @@
           "tool": "get_match_stats",
           "args": {
             "team": "Southbank United",
-            "stats": [
-              "shots",
-              "xG"
-            ]
+            "type": "shots"
+          }
+        },
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "team": "Southbank United",
+            "type": "xG"
           }
         }
       ],
-      "latency_s": 17.7858,
+      "latency_s": 14.5563,
       "attempts": 1,
-      "input_tokens": 3605,
-      "output_tokens": 135,
-      "model_calls": 3,
+      "input_tokens": 2709,
+      "output_tokens": 108,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 1,
@@ -1135,13 +1066,10 @@
         "window.away.shots": 2,
         "window.home.passes": 40
       },
-      "answer": "Northbridge FC had more shots and higher xG in the first 15 minutes, while Southbank United dominated later on with more shots and xG, and more passes.",
+      "answer": "Northbridge FC had more shots and passes but lower xG in the first 15 minutes compared to Southbank United.",
       "error": null,
       "cited_event_ids": [],
-      "cited_sources": [
-        "knowledge/xg.md",
-        "knowledge/field-tilt.md"
-      ],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "compare_periods",
@@ -1149,36 +1077,17 @@
             "start_min": 0,
             "end_min": 15
           }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "field tilt"
-          }
-        },
-        {
-          "tool": "compare_periods",
-          "args": {
-            "end_min": 15,
-            "start_min": 0
-          }
         }
       ],
-      "latency_s": 25.2913,
+      "latency_s": 14.1063,
       "attempts": 1,
-      "input_tokens": 8384,
-      "output_tokens": 172,
-      "model_calls": 5,
+      "input_tokens": 3099,
+      "output_tokens": 107,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 3,
-      "judge_justification": "Answers the question but with a notable gap (missing xG values), and an unclear sentence structure.",
+      "judge_justification": "Answers the question but does not mention the specific number of shots and passes, and uses xG which is not provided in the evidence.",
       "facts_matched": 0,
       "facts_total": 3,
       "fact_accuracy": 0.0,
@@ -1196,58 +1105,30 @@
       "expected": {
         "score": "1-1"
       },
-      "answer": "The score is 1-1. Northbridge FC and Southbank United have each scored one goal, with Southbank United leading in expected goals (xG) at 1.453 to Northbridge FC's 0.929.",
+      "answer": "The score is 1-1.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-798"
-      ],
-      "cited_sources": [
-        "knowledge/xg.md"
-      ],
+      "cited_event_ids": [],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
-          "args": {
-            "period": 2,
-            "minute": 88,
-            "second": 48
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "get_momentum",
-          "args": {
-            "window_min": 5
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "n": 5,
-            "team": "Northbridge FC",
-            "type": "Shot"
-          }
+          "args": {}
         }
       ],
-      "latency_s": 31.8301,
+      "latency_s": 7.7374,
       "attempts": 1,
-      "input_tokens": 9270,
-      "output_tokens": 206,
-      "model_calls": 5,
+      "input_tokens": 2357,
+      "output_tokens": 52,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 4,
-      "judge_justification": "The answer is clear and correct, but it introduces the concept of xG which was not asked for in the question.",
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, fully answers the question, and appropriately hedged as it does not introduce any additional information beyond what was provided.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
-      "cited": 1,
-      "cited_valid": 1,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -1261,23 +1142,33 @@
         "home.shots": 13,
         "away.shots": 11
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 13 shots, while Southbank United has 11 shots.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 20.3372,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "shots": {
+              "away": "Southbank United",
+              "home": "Northbridge FC"
+            }
+          }
+        }
+      ],
+      "latency_s": 10.8422,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2377,
+      "output_tokens": 81,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -1293,12 +1184,10 @@
         "home.xg": 0.929,
         "away.xg": 1.453
       },
-      "answer": "Southbank United has created better chances so far, with a higher xG of 1.453 compared to Northbridge FC's 0.929.",
+      "answer": "Southbank United has created better chances so far, with an xG of 1.453 compared to Northbridge FC's 0.929.",
       "error": null,
       "cited_event_ids": [],
-      "cited_sources": [
-        "knowledge/xg.md"
-      ],
+      "cited_sources": [],
       "tools_used": [
         {
           "tool": "get_match_stats",
@@ -1308,36 +1197,17 @@
               "home": "Northbridge FC"
             }
           }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "xG"
-          }
-        },
-        {
-          "tool": "compare_periods",
-          "args": {
-            "start_min": 88,
-            "end_min": 90
-          }
-        },
-        {
-          "tool": "lookup_definition",
-          "args": {
-            "query": "field tilt"
-          }
         }
       ],
-      "latency_s": 54.8098,
+      "latency_s": 19.1029,
       "attempts": 1,
-      "input_tokens": 8732,
-      "output_tokens": 397,
-      "model_calls": 5,
+      "input_tokens": 3187,
+      "output_tokens": 136,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the provided evidence, but it does not fully address the question as it does not explicitly state 'so far'.",
+      "judge_justification": "The answer is clear and grounded in the evidence, but it slightly omits that the question asks about 'better chances' rather than just xG.",
       "facts_matched": 2,
       "facts_total": 2,
       "fact_accuracy": 1.0,
@@ -1356,23 +1226,30 @@
         "home.possession": 43.9,
         "away.possession": 56.1
       },
-      "answer": "",
-      "error": "502: The model returned an unsupported answer. Please try again.",
+      "answer": "Northbridge FC has 43.9% possession, while Southbank United has 56.1%.",
+      "error": null,
       "cited_event_ids": [],
       "cited_sources": [],
-      "tools_used": [],
-      "latency_s": 24.1592,
+      "tools_used": [
+        {
+          "tool": "get_match_stats",
+          "args": {
+            "possession": {}
+          }
+        }
+      ],
+      "latency_s": 12.1019,
       "attempts": 1,
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "model_calls": 0,
+      "input_tokens": 2362,
+      "output_tokens": 73,
+      "model_calls": 2,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": null,
-      "judge_justification": "Not judged (no answer): 502: The model returned an unsupported answer. Please try again.",
-      "facts_matched": 0,
+      "judge_score": 5,
+      "judge_justification": "The answer is grounded, correct, clear, and fully addresses the question without any invented information.",
+      "facts_matched": 2,
       "facts_total": 2,
-      "fact_accuracy": 0.0,
+      "fact_accuracy": 1.0,
       "cited": 0,
       "cited_valid": 0,
       "citation_ok": 1.0,
@@ -1387,7 +1264,7 @@
       "expected": {
         "source": "knowledge/field-tilt.md"
       },
-      "answer": "Field tilt is each team's share of completed passes starting in the attacking third, from x=80 to x=120 on a 120-long pitch. It is unknown until at least one completed attacking-third pass exists.",
+      "answer": "Field tilt is the share of completed passes that start in the attacking third, with the attacking third defined as x from 80 to 120 on the 120-long pitch. It is unknown until at least one completed attacking-third pass exists.",
       "error": null,
       "cited_event_ids": [],
       "cited_sources": [
@@ -1401,15 +1278,15 @@
           }
         }
       ],
-      "latency_s": 18.0684,
+      "latency_s": 18.5949,
       "attempts": 1,
-      "input_tokens": 3646,
-      "output_tokens": 142,
+      "input_tokens": 3292,
+      "output_tokens": 119,
       "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the provided evidence, but it could be slightly more concise.",
+      "judge_justification": "The answer is clear and grounded in the provided evidence, but it could be slightly more precise by mentioning that the attacking third is typically from the 40-yard line to the end zone.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
@@ -1427,18 +1304,11 @@
       "expected": {
         "source": "knowledge/xt.md"
       },
-      "answer": "In the last 5 minutes, Southbank United has added more xT than Northbridge FC. Southbank 7 has been involved in recent passes.",
+      "answer": "Expected threat (xT) values a location on the pitch by how likely possession there is to lead to a goal within the next few actions. Moving the ball from a low-threat zone to a high-threat zone adds xT; moving it backwards can subtract xT.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-268",
-        "synthetic-42-267",
-        "synthetic-42-266",
-        "synthetic-42-265",
-        "synthetic-42-264"
-      ],
+      "cited_event_ids": [],
       "cited_sources": [
-        "knowledge/xt.md",
-        "knowledge/momentum.md"
+        "knowledge/xt.md"
       ],
       "tools_used": [
         {
@@ -1448,38 +1318,26 @@
           }
         },
         {
-          "tool": "get_momentum",
-          "args": {
-            "window_min": 5
-          }
-        },
-        {
           "tool": "lookup_definition",
           "args": {
-            "query": "xT added"
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "n": 5
+            "query": "xT"
           }
         }
       ],
-      "latency_s": 31.0071,
+      "latency_s": 19.0083,
       "attempts": 1,
-      "input_tokens": 9046,
-      "output_tokens": 207,
-      "model_calls": 5,
+      "input_tokens": 4491,
+      "output_tokens": 126,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 2,
-      "judge_justification": "The answer is not grounded as it does not define xT, and it is off-question as it provides information about recent events instead of explaining the meaning of xT.",
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and correctly defines xT, but it could be slightly more precise by mentioning that xT is a metric used in football analytics.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
-      "cited": 5,
-      "cited_valid": 5,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -1492,15 +1350,9 @@
       "expected": {
         "source": "knowledge/xg.md"
       },
-      "answer": "Northbridge FC leads 1-0 with 29 minutes played. Southbank United has slightly more possession and field tilt but Northbridge FC has a higher xG. Momentum is currently with Southbank United, who have added 0.03 xT in the last 5 minutes.",
+      "answer": "xG is the probability of a shot becoming a goal, estimated from shot characteristics. Northbridge FC has an xG of 0.482, while Southbank United has 0.241.",
       "error": null,
-      "cited_event_ids": [
-        "synthetic-42-268",
-        "synthetic-42-267",
-        "synthetic-42-266",
-        "synthetic-42-265",
-        "synthetic-42-264"
-      ],
+      "cited_event_ids": [],
       "cited_sources": [
         "knowledge/xg.md"
       ],
@@ -1514,34 +1366,22 @@
         {
           "tool": "get_match_stats",
           "args": {}
-        },
-        {
-          "tool": "get_momentum",
-          "args": {
-            "window_min": 5
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "n": 5
-          }
         }
       ],
-      "latency_s": 57.7778,
+      "latency_s": 17.4305,
       "attempts": 1,
-      "input_tokens": 11378,
-      "output_tokens": 378,
-      "model_calls": 6,
+      "input_tokens": 4336,
+      "output_tokens": 113,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 3,
-      "judge_justification": "The answer addresses the question but does not clearly explain what xG is, and it introduces future events (29 minutes played) that were not in the evidence.",
+      "judge_score": 4,
+      "judge_justification": "The answer is clear and grounded in the provided evidence, but it does not explicitly mention that xG is a statistical concept used in football to predict the likelihood of a shot resulting in a goal.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
-      "cited": 5,
-      "cited_valid": 5,
+      "cited": 0,
+      "cited_valid": 0,
       "citation_ok": 1.0,
       "leaks": []
     },
@@ -1554,7 +1394,7 @@
       "expected": {
         "source": "knowledge/possession.md"
       },
-      "answer": "Northbridge FC's possession is estimated from event times, crediting the team of the earlier event between two consecutive events.",
+      "answer": "Possession is estimated from event time, credited to the team recorded in StatsBomb's `possession_team` field between two consecutive events.",
       "error": null,
       "cited_event_ids": [],
       "cited_sources": [
@@ -1569,35 +1409,18 @@
         },
         {
           "tool": "get_match_stats",
-          "args": {
-            "team": null,
-            "type": null
-          }
-        },
-        {
-          "tool": "get_momentum",
-          "args": {
-            "window_min": 5
-          }
-        },
-        {
-          "tool": "get_recent_events",
-          "args": {
-            "team": "Northbridge FC",
-            "type": "Shot",
-            "n": 5
-          }
+          "args": {}
         }
       ],
-      "latency_s": 25.3184,
+      "latency_s": 16.1266,
       "attempts": 1,
-      "input_tokens": 8155,
-      "output_tokens": 160,
-      "model_calls": 5,
+      "input_tokens": 4062,
+      "output_tokens": 99,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the evidence, but it does not fully address how possession is estimated for both teams, only providing information for Northbridge FC.",
+      "judge_justification": "The answer is clear and grounded in the evidence, but it could be more specific about the exact method used to estimate possession.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
@@ -1615,7 +1438,7 @@
       "expected": {
         "source": "knowledge/momentum.md"
       },
-      "answer": "Southbank United has a slight momentum edge with 0.032 xT added in the last 5 minutes, but both teams have zero net difference in the current momentum proxy.",
+      "answer": "Southbank United leads the last 5 minutes with 0.078 xT added, while Northbridge FC has 0. Northbridge FC took over momentum at 1' with 3 attacking actions, adding 0.10 xT.",
       "error": null,
       "cited_event_ids": [
         "synthetic-42-25",
@@ -1623,7 +1446,8 @@
         "synthetic-42-14"
       ],
       "cited_sources": [
-        "knowledge/momentum.md"
+        "knowledge/momentum.md",
+        "knowledge/xt.md"
       ],
       "tools_used": [
         {
@@ -1639,15 +1463,15 @@
           }
         }
       ],
-      "latency_s": 35.3415,
+      "latency_s": 24.2467,
       "attempts": 1,
-      "input_tokens": 5916,
-      "output_tokens": 246,
-      "model_calls": 4,
+      "input_tokens": 4314,
+      "output_tokens": 162,
+      "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
-      "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded, but it slightly omits that the momentum proxy is specifically a statistical measure of team performance, which is implied but not explicitly stated.",
+      "judge_score": 3,
+      "judge_justification": "The answer addresses the question but does not clearly explain what a momentum proxy is. It also includes information about the current state of the match, which is not directly related to the momentum proxy.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
@@ -1665,7 +1489,7 @@
       "expected": {
         "source": "knowledge/passing-networks.md"
       },
-      "answer": "A passing network shows each player at the average location of their passes and receptions, with lines between players whose thickness reflects how often they passed to each other. It describes the current window only, resetting after substitutions or sending-offs.",
+      "answer": "A passing network shows each player at the average location of their passes and receptions, with lines between players whose thickness reflects how often they passed to each other. Touchline builds it live from completed passes already replayed.",
       "error": null,
       "cited_event_ids": [],
       "cited_sources": [
@@ -1677,17 +1501,23 @@
           "args": {
             "query": "passing network"
           }
+        },
+        {
+          "tool": "lookup_definition",
+          "args": {
+            "query": "passing network"
+          }
         }
       ],
-      "latency_s": 17.7514,
+      "latency_s": 18.4975,
       "attempts": 1,
-      "input_tokens": 3534,
-      "output_tokens": 133,
+      "input_tokens": 4072,
+      "output_tokens": 120,
       "model_calls": 3,
       "cost_usd": 0.0,
       "judge": "ollama judge",
       "judge_score": 4,
-      "judge_justification": "The answer is clear and grounded in the provided evidence, but it does not fully address the question as it does not explicitly mention the concept of a passing network in the context of football.",
+      "judge_justification": "The answer is clear and grounded in the provided evidence, but it could be slightly more concise and directly address the question without repeating itself.",
       "facts_matched": 1,
       "facts_total": 1,
       "fact_accuracy": 1.0,
@@ -1721,21 +1551,21 @@
     {
       "config": "langgraph/ollama",
       "questions": 36,
-      "errors": 14,
-      "factual_accuracy": 0.4583,
-      "factual_accuracy_answered": 0.75,
+      "errors": 0,
+      "factual_accuracy": 0.7917,
+      "factual_accuracy_answered": 0.7917,
       "citation_validity": 1.0,
       "leakage": 0,
-      "latency_p50_s": 28.0351,
-      "latency_p95_s": 54.8098,
-      "avg_tool_calls": 3,
-      "model_calls": 94,
-      "input_tokens": 152842,
-      "output_tokens": 4493,
+      "latency_p50_s": 14.201,
+      "latency_p95_s": 19.8884,
+      "avg_tool_calls": 1.333,
+      "model_calls": 83,
+      "input_tokens": 102135,
+      "output_tokens": 3490,
       "cost_usd": 0.0,
       "retried": 0,
       "judge": "ollama judge",
-      "judge_avg": 3.318
+      "judge_avg": 4.028
     }
   ],
   "retrieval": {
